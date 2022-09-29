@@ -22,37 +22,40 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.Sound.Sound;
+import uet.oop.bomberman.graphics.loadMap;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
 /**
  * menu0 game chính.
  */
 public class Menu {
-    private static final Gamemenu gamemenu;
-
-    static {
+  /*  static Gamemenu gamemenu;
+    {
         try {
             gamemenu = new Gamemenu();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     public static void createMenu(Stage stage, Group root, Scene scene) throws IOException {
+
+        Gamemenu gamemenu = new Gamemenu();
+
         stage.setTitle("Bomberman ver 1.0");
         Pane pane = new Pane();
         pane.setPrefSize(800, 640);
 
-        InputStream is = Files.newInputStream(Paths.get("res/textures/menu.png"));
-        Image image = new Image(is);
-        ImageView soundView = new ImageView(image);
+        //InputStream is = Files.newInputStream(Paths.get("res/textures/menu.png"));
+        InputStream path = Files.newInputStream(Paths.get("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png"));
+        Image image = new Image(path);
+        ImageView background = new ImageView(image);
 
         // Tao root container
-        root.getChildren().addAll(soundView, gamemenu);
+       root.getChildren().addAll(background, gamemenu);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
@@ -70,12 +73,13 @@ public class Menu {
      * Xây dựng các button.
      */
     private static class Gamemenu extends Parent {
-        public Gamemenu() throws FileNotFoundException {
+        public Gamemenu() throws IOException {
             // Cửa sổ chính chứa các button
             VBox menu0 = new VBox(10);
             VBox menu1 = new VBox(10);
             VBox menu2 = new VBox(10);
             VBox menu3 = new VBox(10);
+            VBox menu4 = new VBox(10);
 
             menu0.setTranslateX(300);
             menu0.setTranslateY(350);
@@ -86,17 +90,49 @@ public class Menu {
             menu2.setTranslateX(300);
             menu2.setTranslateY(350);
 
+            menu3.setTranslateX(300);
+            menu3.setTranslateY(350);
+
+            menu4.setTranslateX(300);
+            menu4.setTranslateY(350);
 
             final int offset = 400;
 
             menu1.setTranslateX(offset);
             menu2.setTranslateX(offset);
             menu3.setTranslateX(offset);
+            menu4.setTranslateX(offset);
 
             // New game button
             menuButton newGameButton = new menuButton("NEW GAME");
             newGameButton.setOnMouseClicked(event -> {
+                getChildren().add(menu4);
 
+                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu0);
+                tt.setToX(menu0.getTranslateX() - offset);
+
+                TranslateTransition tt1 = new TranslateTransition(Duration.seconds(0.5), menu4);
+                tt1.setToX(menu0.getTranslateX());
+
+                tt.play();
+                tt1.play();
+
+                tt.setOnFinished(event1 -> {
+                    getChildren().remove(menu0);
+                    // Load map từ file cấu hình
+        try {
+            new loadMap("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\levels\\Level1.txt");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+                });
+
+               /* try {
+                    new loadMap("res/levels/Level1.txt");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }*/
+                // graphics.loadMap();
             });
 
             // Resume button
@@ -128,7 +164,7 @@ public class Menu {
                 });
             });
 
-            String tutorialtName = "res/textures/tutorial.png";
+            String tutorialtName = "C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\tutorial.png";
             textMenu tutorial = new textMenu(tutorialtName, 300, 250);
 
             // Sound Button
@@ -298,9 +334,9 @@ public class Menu {
      * Load tutorial.
      */
    private static class textMenu extends StackPane{
-        public textMenu(String path, int width, int height) throws FileNotFoundException {
+        public textMenu(String path, int width, int height) throws IOException {
             // Load tutorial image
-            Image img = new Image(new FileInputStream(path));
+            Image img = new Image(Files.newInputStream(Paths.get(path)));
             ImageView imageView = new ImageView(img);
             imageView.setFitWidth(width);
             imageView.setFitHeight(height);
