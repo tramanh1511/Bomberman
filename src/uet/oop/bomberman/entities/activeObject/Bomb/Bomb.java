@@ -2,78 +2,65 @@ package uet.oop.bomberman.entities.activeObject.Bomb;
 
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.activeObject.Character.Character;
+import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.loadMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static uet.oop.bomberman.BombermanGame.bomber;
 
-public class Bomb extends Entity {
+public class Bomb extends activeEntity {
 
-    //
-    protected int timeToExplode = 120;  // thời gian chờ trước khi nổ, 2s
-    protected int _timeAfter = 40;
-    public static int bombStatus = 0;
-    public static int length = 0;
-    public static int timeExplode = 0;
-    private static long timeBomb;
+    protected int timeAfter = 40;
+    public int powerFlames = 0;
+    public static int timeExplode = 120;
     private boolean played = false;
     public boolean added = false;
     public boolean exploded = false;
 
-    private static Entity bomb;
-
     public static List<Flame> flameList = new ArrayList<>();
 
-    public Bomb(int xUnit, int yUnit, Image img) {
+    public Bomb(int xUnit, int yUnit, Image img, int powerFlames) {
         super(xUnit, yUnit, img);
+        this.powerFlames = powerFlames;
+        this.exploded = false;
+        this.delete = false;
+        createFlame();
     }
 
-    public void putBomb() {
-        bombStatus = 1;
-        timeBomb = System.currentTimeMillis();
-
-        int x = Math.round(bomber.getX());
-        int y = Math.round(bomber.getY());
-
-        bomb = new Bomb(x, y, Sprite.bomb.getFxImage());
-      // setImg(Sprite.movingSprite(Sprite.bomb, Sprite.bomb_1, Sprite.bomb_2, 30, 20).getFxImage());
-      //  createFlame(4);
-    }
-
-    public static void createFlame(int length) {
-        for (int i = 1; i <= length; i++) {
-            int x = bomb.getX() / Sprite.SCALED_SIZE;
-            int y = bomb.getY() / Sprite.SCALED_SIZE;
-            char tile = loadMap.map[y][x + i];
-            if (tile != '#') {
-                // Nếu là flame cuối hoặc gặp tường
-                if (i == length || tile == '*') {
-                    flameList.add(new Flame(x + i, y, 3, true, Sprite.explosion_vertical.getFxImage()));
-                    // flameList.add(new Flame(x, y - i, 0, true, Sprite.explosion_vertical.getFxImage()));*/
-                    break;
+    public void createFlame() {
+        int direction[] = {0, 1, 2, 3};
+        for (int i = 1; i <= powerFlames; i++) {
+            int x = getY() / Sprite.SCALED_SIZE;
+            int y = getX() / Sprite.SCALED_SIZE;
+            for (int k = 0; k < 4; k++) {
+                // Mảng dx, dy dùng để duyệt theo 4 góc
+                int[] dx = {0, 0, -i, i};
+                int[] dy = {-i, i, 0, 0};
+                char tile = loadMap.map[x + dx[k]][y + dy[k]];
+                if (tile != '#') {
+                    // Nếu là flame cuối hoặc gặp tường
+                    if (i == powerFlames || tile == '*') {
+                        flameList.add(new Flame(x + dx[k], y + dy[k], direction[k], true, Sprite.explosion_vertical.getFxImage()));
+                        break;
+                    } else {
+                        flameList.add(new Flame(x + dx[k], y + dy[k], direction[k], false, Sprite.explosion_vertical.getFxImage()));
+                    }
                 } else {
-                    flameList.add(new Flame(x + i, y, 3, false, Sprite.explosion_vertical.getFxImage()));
-                  /*  flameList.add(new Flame(x, y + i, 1, false, Sprite.explosion_vertical.getFxImage()));
-                    flameList.add(new Flame(x - i, y, 2, false, Sprite.explosion_vertical.getFxImage()));
-                    flameList.add(new Flame(x, y - i, 0, true, Sprite.explosion_vertical.getFxImage()));*/
+                    break;
                 }
-            } else {
-                break;
             }
         }
 
-        for (int i = 1; i <= length; i++) {
+      /*  for (int i = 1; i <= powerFlames; i++) {
             int x = bomb.getX() / Sprite.SCALED_SIZE;
             int y = bomb.getY() / Sprite.SCALED_SIZE;
             char tile = loadMap.map[y + i][x];
             if (tile != '#') {
                 // Nếu là flame cuối hoặc gặp tường
-                if (i == length || tile == '*') {
+                if (i == powerFlames || tile == '*') {
                     flameList.add(new Flame(x, y + i, 1, true, Sprite.explosion_vertical.getFxImage()));
                     break;
                 } else {
@@ -84,13 +71,13 @@ public class Bomb extends Entity {
             }
         }
 
-        for (int i = 1; i <= length; i++) {
+        for (int i = 1; i <= powerFlames; i++) {
             int x = bomb.getX() / Sprite.SCALED_SIZE;
             int y = bomb.getY() / Sprite.SCALED_SIZE;
             char tile = loadMap.map[y][x + i];
             if (tile != '#') {
                 // Nếu là flame cuối hoặc gặp tường
-                if (i == length || tile == '*') {
+                if (i == powerFlames || tile == '*') {
                     flameList.add(new Flame(x, y - i, 0, true, Sprite.explosion_vertical.getFxImage()));
                     break;
                 } else {
@@ -99,7 +86,7 @@ public class Bomb extends Entity {
             } else {
                 break;
             }
-        }
+        }*/
     }
 
     public void update() {
@@ -117,12 +104,28 @@ public class Bomb extends Entity {
                 added = true;
             }
             exploded = true;
-            _timeAfter--; // Đếm ngược thời gian bom sau khi nổ
-            if (_timeAfter < 0) { // Nếu đã hết thời gian sau khi nổ
-                loadMap.map[(getY() + Sprite.SCALED_SIZE / 2) / Sprite.SCALED_SIZE][(getX() + Sprite.SCALED_SIZE / 2) / Sprite.SCALED_SIZE] = ' ';
+            timeAfter--; // Đếm ngược thời gian bom sau khi nổ
+            if (timeAfter < 0) { // Nếu đã hết thời gian sau khi nổ
+                delete = true;
             }
             // Animation bom nổ
-            setImg(Sprite.movingSprite(Sprite.bomb_exploded, Sprite.bomb_exploded1, Sprite.bomb_exploded2, _timeAfter, 20).getFxImage());
+            setImg(Sprite.movingSprite(Sprite.bomb_exploded, Sprite.bomb_exploded1, Sprite.bomb_exploded2, timeAfter, 20).getFxImage());
+        }
+    }
+
+    public void collide(Character character) {
+        // Bom chưa nổ hoặc nhân vật chết rồi thì bỏ qua
+        if(!exploded || !character.active) {
+            return;
+        }
+        int x = getX() / Sprite.SCALED_SIZE;
+        int y = getY() / Sprite.SCALED_SIZE;
+
+        int xCharacter = character.getX() / Sprite.SCALED_SIZE;
+        int yCharacter = character.getY() / Sprite.SCALED_SIZE;
+
+        if (x == xCharacter && y == yCharacter) {
+            character.active = false;
         }
     }
 }

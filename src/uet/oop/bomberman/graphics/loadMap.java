@@ -9,6 +9,7 @@ import uet.oop.bomberman.entities.stillObject.Wall;
 import uet.oop.bomberman.entities.activeObject.Character.Balloon;
 import uet.oop.bomberman.entities.activeObject.Character.Oneal;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
@@ -20,8 +21,8 @@ import static uet.oop.bomberman.BombermanGame.*;
 
 public class loadMap {
     public static char[][] map = new char[BombermanGame.HEIGHT][BombermanGame.WIDTH];
-    public loadMap(String Level) throws FileNotFoundException {
-        FileReader file = new FileReader(Level);
+    public loadMap(String path) throws FileNotFoundException {
+        FileReader file = new FileReader(path);
         Scanner in = new Scanner(file);
         try {
             level = in.nextInt();
@@ -96,6 +97,8 @@ public class loadMap {
                             BombermanGame.stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                             break;
                     }
+                   // entities.addAll(stillObjects);
+                   // entities.addAll(activeObjects);
                 }
             }
             in.close();

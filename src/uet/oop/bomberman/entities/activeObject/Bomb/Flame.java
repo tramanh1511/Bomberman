@@ -1,12 +1,14 @@
 package uet.oop.bomberman.entities.activeObject.Bomb;
 
 import javafx.scene.image.Image;
-import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class Flame extends Entity {
+public class Flame extends activeEntity {
     public int direction;
     public boolean last;
+    public static int length = 4;
+
 
     public Flame(int xUnit, int yUnit, int direction, boolean last, Image img) {
         super(xUnit, yUnit, img);

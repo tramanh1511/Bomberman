@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
@@ -22,9 +23,10 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.Sound.Sound;
-import uet.oop.bomberman.graphics.loadMap;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -32,15 +34,6 @@ import java.nio.file.Paths;
  * menu0 game chính.
  */
 public class Menu {
-  /*  static Gamemenu gamemenu;
-    {
-        try {
-            gamemenu = new Gamemenu();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }*/
-
     public static void createMenu(Stage stage, Group root, Scene scene) throws IOException {
 
         Gamemenu gamemenu = new Gamemenu();
@@ -49,13 +42,12 @@ public class Menu {
         Pane pane = new Pane();
         pane.setPrefSize(800, 640);
 
-        //InputStream is = Files.newInputStream(Paths.get("res/textures/menu.png"));
-        InputStream path = Files.newInputStream(Paths.get("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png"));
-        Image image = new Image(path);
+       // InputStream path = Files.newInputStream(Paths.get("res/textures/menu.png"));
+        Image image = new Image("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png");
         ImageView background = new ImageView(image);
 
         // Tao root container
-       root.getChildren().addAll(background, gamemenu);
+        root.getChildren().addAll(background, gamemenu);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
@@ -119,20 +111,13 @@ public class Menu {
 
                 tt.setOnFinished(event1 -> {
                     getChildren().remove(menu0);
-                    // Load map từ file cấu hình
-        try {
-            new loadMap("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\levels\\Level1.txt");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
                 });
-
-               /* try {
-                    new loadMap("res/levels/Level1.txt");
+                try {
+                    gameWindow menuBoard = new gameWindow();
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
-                }*/
-                // graphics.loadMap();
+                }
+
             });
 
             // Resume button
@@ -164,12 +149,12 @@ public class Menu {
                 });
             });
 
-            String tutorialtName = "C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\tutorial.png";
-            textMenu tutorial = new textMenu(tutorialtName, 300, 250);
+            String tutorialName = "C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\tutorial.png";
+            textMenu tutorial = new textMenu(tutorialName, 300, 250);
 
             // Sound Button
-            String backgroundSound = "start";
-            Sound.play(backgroundSound);
+           Sound bacgroundSound = new Sound("start");
+           bacgroundSound.play(true);
 
             menuButton soundButton = new menuButton("SOUND");
             soundButton.setOnMouseClicked(event -> {
@@ -193,14 +178,13 @@ public class Menu {
             // Mute Sound
             menuButton mute = new menuButton("MUTE");
             mute.setOnMouseClicked(event -> {
-                //System.out.println("PO");
-                Sound.stop(backgroundSound);
+                bacgroundSound.play(false);
             });
 
             // Unmute Sound
             menuButton unMute = new menuButton("UNMUTE");
             unMute.setOnMouseClicked(event -> {
-                Sound.play(backgroundSound);
+                bacgroundSound.play(true);
             });
 
             // Back from menu 2 to menu 0
@@ -242,9 +226,6 @@ public class Menu {
                 });
             });
 
-            String aboutName = "E:\\bomberman\\e.png";
-            textMenu about = new textMenu(aboutName, 1000, 500);
-
             // Exit button
             menuButton exitButton = new menuButton("EXIT");
             exitButton.setOnMouseClicked(event -> {
@@ -279,7 +260,7 @@ public class Menu {
 
             menu2.getChildren().addAll(mute, unMute, backButton2);
 
-            menu3.getChildren().addAll(about);
+            //menu4.getChildren().addAll(gameWindow);
 
             Rectangle bg = new Rectangle(800, 640);
             bg.setFill(Color.GREY);
@@ -333,10 +314,10 @@ public class Menu {
     /**
      * Load tutorial.
      */
-   private static class textMenu extends StackPane{
+    private static class textMenu extends StackPane {
         public textMenu(String path, int width, int height) throws IOException {
             // Load tutorial image
-            Image img = new Image(Files.newInputStream(Paths.get(path)));
+            Image img = new Image(path);
             ImageView imageView = new ImageView(img);
             imageView.setFitWidth(width);
             imageView.setFitHeight(height);

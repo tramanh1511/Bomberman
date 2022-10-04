@@ -11,7 +11,7 @@ import java.nio.IntBuffer;
 public class Sprite {
 	
 	public static final int DEFAULT_SIZE = 16;
-	public static final int SCALED_SIZE = DEFAULT_SIZE * 2;
+	public static final int SCALED_SIZE = DEFAULT_SIZE * 2 ;
     private static final int TRANSPARENT_COLOR = 0xffff00ff;
 	public final int SIZE;
 	private int _x, _y;
@@ -19,6 +19,8 @@ public class Sprite {
 	protected int _realWidth;
 	protected int _realHeight;
 	private SpriteSheet _sheet;
+
+	private Image image;
 
 	/*
 	|--------------------------------------------------------------------------
@@ -194,6 +196,7 @@ public class Sprite {
 		_realWidth = rw;
 		_realHeight = rh;
 		load();
+		image = getFxImage();
 	}
 	
 	public Sprite(int size, int color) {
@@ -201,7 +204,11 @@ public class Sprite {
 		_pixels = new int[SIZE * SIZE];
 		setColor(color);
 	}
-	
+
+	public Image getImage() {
+		return image;
+	}
+
 	private void setColor(int color) {
 		for (int i = 0; i < _pixels.length; i++) {
 			_pixels[i] = color;

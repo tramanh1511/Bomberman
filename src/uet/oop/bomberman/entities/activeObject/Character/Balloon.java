@@ -6,7 +6,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.loadMap;
 import java.util.Random;
 
-
+import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.*;
 
 public class Balloon extends Character {
    // Biến random hướng đi của Balloon
@@ -53,51 +53,12 @@ public class Balloon extends Character {
     }
 
     /**
-     * Hàm kiểm tra xem có thể đi vào ô (x,y) ko.
-     */
-    @Override
-    public boolean canMove(int x, int y, char[][] map) {
-        return map[x][y] != '*' && map[x][y] != '#';
-    }
-
-    /**
      * Random hướng đi của balloon
      * @param x tọa độ hàng trên map
      * @param y tọa độ cột trên map
      * @param map lưu map từ file level
      * @return hướng random đi được
      */
-    public int getRandomDirection(int x, int y, char[][] map) {
-        boolean isRunning = true;
-        while (isRunning) {
-            randomDirection = random.nextInt(4);
-            if (randomDirection == 0) { // đi lên
-                if (canMove(x - speed, y, map)) {
-                    isRunning = false;
-                    break;
-                }
-            }
-            if (randomDirection == 1) { // đi xuống
-                if (canMove(x + speed, y, map)) {
-                    isRunning = false;
-                    break;
-                }
-            }
-            if (randomDirection == 3) { // đi phải
-                if (canMove(x, y + speed, map)) {
-                    isRunning = false;
-                    break;
-                }
-            }
-            if (randomDirection == 2) { // đi trái
-                if (canMove(x, y - speed, map)) {
-                    isRunning = false;
-                    break;
-                }
-            }
-        }
-        return randomDirection;
-    }
 
     /**
      * Hàm di chuyển chung.
@@ -119,10 +80,6 @@ public class Balloon extends Character {
         }
     }
 
-    public void render(GraphicsContext gc) {
-        gc.drawImage(img, x, y);
-    }
-
     /**
      * Cập nhật trạng thái của balloon
      */
@@ -132,7 +89,7 @@ public class Balloon extends Character {
         if (animation > 100) {
             animation = 0;
         }
-        if (!alive) {
+        if (!active) {
             animationTime--;
             if (animationTime < 0) {
                 delete = true;
@@ -146,7 +103,9 @@ public class Balloon extends Character {
             }
         } else {
             if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
-                randomDirection = getRandomDirection(getY() / Sprite.SCALED_SIZE, getX() / Sprite.SCALED_SIZE, loadMap.map);
+                int xMap = getY() / Sprite.SCALED_SIZE;
+                int yMap = getX() / Sprite.SCALED_SIZE;
+                randomDirection = easyMove.getDirection(xMap, yMap, speed, loadMap.map);
                 randomTimeInterval = 30;
             } else {
                 randomTimeInterval--;
