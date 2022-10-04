@@ -33,17 +33,12 @@ public class Oneal extends Character {
 
     }
 
-    /**
-     * Hàm kiểm tra xem có thể đi vào ô (x,y) ko.
-     *
-     * @param x
-     * @param y
-     * @param map
-     */
+
     @Override
     public boolean canMove(int x, int y, char[][] map) {
         return false;
     }
+
 
     @Override
     public void update() {
