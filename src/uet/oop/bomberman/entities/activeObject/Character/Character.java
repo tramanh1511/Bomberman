@@ -1,20 +1,16 @@
 package uet.oop.bomberman.entities.activeObject.Character;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.activeObject.activeEntity;
 
 
 /**
  * Các vật thể di chuyển.
  */
-public abstract class Character extends Entity {
+public abstract class Character extends activeEntity {
 
-    // Xem còn sống ko
-    boolean alive = true;
-    public int animation = 0;
     // Tốc độ di chuyển
-
-    public boolean delete = false;
     public int speed;
 
     public Character(int x, int y, Image img) {
@@ -34,9 +30,15 @@ public abstract class Character extends Entity {
     /**
      * Hàm kiểm tra xem có thể đi vào ô (x,y) ko.
      */
-    public abstract boolean canMove(int x, int y, char[][] map);
+    public boolean canMove(int x, int y, char[][] map) {
+        return true;
+    }
 
     public void update() {
+
+    }
+
+    public void collide() {
 
     }
 }

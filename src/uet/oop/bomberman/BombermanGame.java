@@ -2,15 +2,18 @@ package uet.oop.bomberman;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import uet.oop.bomberman.Sound.Sound;
 import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.activeObject.Bomb.Flame;
 import uet.oop.bomberman.entities.activeObject.Character.Bomber;
+import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.loadMap;
 
@@ -18,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BombermanGame extends Application {
 
@@ -29,12 +31,21 @@ public class BombermanGame extends Application {
     public static int height = 0;
     public static int level = 1;
 
+    public static boolean levelUp = false;
 
     private GraphicsContext gc;
     private Canvas canvas;
-    public static List<Entity> entities = new ArrayList<>();
+
     public static List<Entity> stillObjects = new ArrayList<>();
-    public static List<Entity> activeObjects = new ArrayList<>();
+    public static List<activeEntity> activeObjects = new ArrayList<>();
+
+    public static Bomber bomber;
+
+    /*
+    -------SOUND-------
+     */
+    public static Sound bombSound = new Sound("bombSound");
+    public static Sound deadSound = new Sound("deadSound");
 
 
     public static void main(String[] args) {
@@ -57,24 +68,19 @@ public class BombermanGame extends Application {
         Scene scene = new Scene(root);
 
         // Tạo menu game
-          //   Menu.createMenu(stage, root, scene);
+        //Menu.createMenu(stage, root, scene);
 
-        // Load map từ file cấu hình
-        try {
-            new loadMap("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\levels\\Level1.txt");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        new loadMap("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\levels\\Level1.txt");
 
-        Bomber bomber = new Bomber(1, 1, Sprite.player_right.getFxImage());
+        bomber = new Bomber(1, 1, Sprite.player_right.getImage());
         activeObjects.add(bomber);
 
-        stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-               if (event.getCode() == KeyCode.ESCAPE) {
-                  stage.close();
-               }
-               bomber.Move(event);
-           });
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                bomber.handleKeyEvent(keyEvent);
+            }
+        });
 
         // Thêm vào scene
         stage.setScene(scene);
@@ -93,18 +99,35 @@ public class BombermanGame extends Application {
             }
         };
         timer.start();
+
     }
 
     public void update() throws FileNotFoundException {
-        for (Entity entity : entities) {
+        for (Entity entity : stillObjects) {
             entity.update();
+        }
+
+        for (int i = 0; i < activeObjects.size(); i++) {
+            activeObjects.get(i).update();
+            for (int j = 0; j < activeObjects.size(); j++) {
+                activeObjects.get(i).collide(activeObjects.get(j));
+            }
+        }
+
+        for (int i = 0; i < activeObjects.size(); i++) {
+            if (activeObjects.get(i).delete) {
+                activeObjects.remove(activeObjects.get(i));
+            }
         }
     }
 
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stillObjects.forEach(g -> g.render(gc));
-        activeObjects.forEach(g -> g.render(gc));
-        entities.forEach(g -> g.render(gc));
+        for (activeEntity entity : activeObjects) {
+            if (entity.active) {
+                entity.render(gc);
+            }
+        }
     }
 }
