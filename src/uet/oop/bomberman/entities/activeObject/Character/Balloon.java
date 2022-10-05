@@ -1,21 +1,22 @@
 package uet.oop.bomberman.entities.activeObject.Character;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.easyMove;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.loadMap;
+
 import java.util.Random;
 
-import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.*;
+import static uet.oop.bomberman.BombermanGame.deadSound;
 
 public class Balloon extends Character {
-   // Biến random hướng đi của Balloon
+    // Biến random hướng đi của Balloon
     private int randomDirection = 2;
 
     // Thời gian giữa 2 lần chuyển hướng
-    private int randomTimeInterval = 30;
+    private int randomTimeInterval = 0;
 
-    private int animationTime = 90;
+    private int animationTime = 60;
     Random random = new Random();
 
     public Balloon(int x, int y, Image img) {
@@ -89,23 +90,28 @@ public class Balloon extends Character {
         if (animation > 100) {
             animation = 0;
         }
-        if (!active) {
+        if (!alive) {
             animationTime--;
             if (animationTime < 0) {
+                deadSound.play(false, 1);
                 delete = true;
-            }
-
-            // Animation ballon chết
-            if(animationTime > 60) {
-                setImg(Sprite.balloon_dead.getFxImage());
+                active = false;
             } else {
-                setImg(Sprite.movingSprite(Sprite.mob_dead1,Sprite.mob_dead2,Sprite.mob_dead3, animationTime,20).getFxImage());
+                // Animation ballon chết
+                if (!deadSound.isPlaying()) {
+                    deadSound.play(true, 1);
+                }
+                if (animationTime > 30) {
+                    setImg(Sprite.balloon_dead.getFxImage());
+                } else {
+                    setImg(Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, animationTime, 20).getFxImage());
+                }
             }
         } else {
-            if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
+            if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval < 0) {
                 int xMap = getY() / Sprite.SCALED_SIZE;
                 int yMap = getX() / Sprite.SCALED_SIZE;
-                randomDirection = easyMove.getDirection(xMap, yMap, speed, loadMap.map);
+                randomDirection = easyMove.getDirection(xMap, yMap, loadMap.map);
                 randomTimeInterval = 30;
             } else {
                 randomTimeInterval--;

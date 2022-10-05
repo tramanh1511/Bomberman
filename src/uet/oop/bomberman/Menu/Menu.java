@@ -23,12 +23,9 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.Sound.Sound;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 
 /**
  * menu0 game chính.
@@ -154,7 +151,7 @@ public class Menu {
 
             // Sound Button
            Sound bacgroundSound = new Sound("start");
-           bacgroundSound.play(true);
+           bacgroundSound.play(true, 0);
 
             menuButton soundButton = new menuButton("SOUND");
             soundButton.setOnMouseClicked(event -> {
@@ -178,13 +175,13 @@ public class Menu {
             // Mute Sound
             menuButton mute = new menuButton("MUTE");
             mute.setOnMouseClicked(event -> {
-                bacgroundSound.play(false);
+                bacgroundSound.play(false, 0);
             });
 
             // Unmute Sound
             menuButton unMute = new menuButton("UNMUTE");
             unMute.setOnMouseClicked(event -> {
-                bacgroundSound.play(true);
+                bacgroundSound.play(true, 0);
             });
 
             // Back from menu 2 to menu 0

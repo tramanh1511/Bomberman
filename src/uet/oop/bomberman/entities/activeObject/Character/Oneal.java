@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities.activeObject.Character;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.activeObject.Character.Character;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.loadMap;
 import java.util.Random;
@@ -97,12 +98,12 @@ public class Oneal extends Character {
             if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
                 int xMap = getY() / Sprite.SCALED_SIZE;
                 int yMap = getX() / Sprite.SCALED_SIZE;
-                randomDirection = mediumMove.getDirection(xMap, yMap, speed, loadMap.map);
+                randomDirection = mediumMove.getDirection(xMap, yMap, loadMap.map);
                 randomTimeInterval = 60;
             } else {
                 randomTimeInterval--;
             }
-           // Move();
+         //   Move();
 
         }
     }

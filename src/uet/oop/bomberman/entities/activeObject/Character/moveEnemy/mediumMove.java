@@ -10,14 +10,12 @@ import uet.oop.bomberman.graphics.Sprite;
 public class mediumMove {
     /**
      * Duyệt theo 4 hướng để tìm của bomber -> oneal đuổi theo.
-     *
      * @param x     tọa độ hàng trên map
      * @param y     tọa độ cột trên map
      * @param map   lưu map từ file level
-     * @param speed tốc độ của ballon
      * @return hướng đi "thông minh hơn Balloon" của Oneal
      */
-    public static int getDirection(int x, int y, int speed, char[][] map) {
+    public static int getDirection(int x, int y, char[][] map) {
         for (int i = 0; i < BombermanGame.activeObjects.size(); i++) {
             if (BombermanGame.activeObjects.get(i) instanceof Bomber) {
                 Bomber bomber = (Bomber) BombermanGame.activeObjects.get(i);
@@ -25,19 +23,19 @@ public class mediumMove {
                 int xBomber = bomber.getY() / Sprite.SCALED_SIZE;
                 int yBomber = bomber.getX() / Sprite.SCALED_SIZE;
 
-                if (x - speed == xBomber && y == yBomber && map[x - speed][y] == ' ') {
-                    return 0; // đi lên
-                } else if (x + speed == yBomber && y == xBomber && map[x + speed][y] == ' ') {
-                    return 1; // đi xuống
-                } else if (x == yBomber && y - speed == xBomber && map[x][y - speed] == ' ') {
-                    return 2; // sang trái
-                } else if (x == yBomber && y + speed == xBomber && map[x][y + speed] == ' ') {
-                    return 3; // sang phải
+                if (x - 2 == xBomber && y == yBomber && map[x - 2][y] == ' ') {
+                    return 0; // up
+                } else if (x + 2 == yBomber && y == xBomber && map[x + 2][y] == ' ') {
+                    return 1; // down
+                } else if (x == yBomber && y - 2 == xBomber && map[x][y - 2] == ' ') {
+                    return 2; // left
+                } else if (x == yBomber && y + 2 == xBomber && map[x][y + 2] == ' ') {
+                    return 3; // right
                 } else {
-                    return easyMove.getDirection(x, y, speed, map);
+                    return easyMove.getDirection(x, y, map);
                 }
             }
         }
-        return easyMove.getDirection(x, y, speed, map);
+        return easyMove.getDirection(x, y, map);
     }
 }

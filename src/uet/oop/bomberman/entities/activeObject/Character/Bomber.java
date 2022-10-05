@@ -1,19 +1,22 @@
 package uet.oop.bomberman.entities.activeObject.Character;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.Sound.Sound;
 import uet.oop.bomberman.entities.activeObject.Bomb.Bomb;
 import uet.oop.bomberman.entities.activeObject.Bomb.Flame;
 import uet.oop.bomberman.entities.activeObject.Item.Item;
 import uet.oop.bomberman.entities.activeObject.Item.bombItem;
 import uet.oop.bomberman.entities.activeObject.Item.flameItem;
 import uet.oop.bomberman.entities.activeObject.Item.speedItem;
+import uet.oop.bomberman.entities.activeObject.Portal;
+import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.loadMap;
 
 import static uet.oop.bomberman.BombermanGame.activeObjects;
+import static uet.oop.bomberman.BombermanGame.deadSound;
 
 
 /**
@@ -23,6 +26,8 @@ public class Bomber extends Character {
 
     public int bombCount = 1;
     public int powerFlames;
+
+    public int animationTime = 90;
     /**
      * Tạo 1 bomber với các thuộc tính cùng với các nút di chuyển.
      */
@@ -31,7 +36,7 @@ public class Bomber extends Character {
 
         speed = 32; // Tốc độ ban đầu
         bombCount = 1; // Số lượng bomb nhả ra mỗi lần
-        powerFlames = 4; // Độ dài của flame
+        powerFlames = 1; // Độ dài của flame
         active = true;
     }
 
@@ -78,7 +83,8 @@ public class Bomber extends Character {
     public boolean canMove(int x, int y, char[][] map) {
        int xUnit = (int) x / Sprite.SCALED_SIZE;
        int yUnit = (int) y / Sprite.SCALED_SIZE;
-       return map[yUnit][xUnit] == ' ';
+     //  System.out.println(xUnit + " " + yUnit);
+       return map[yUnit][xUnit] != '#' &&  map[yUnit][xUnit] != '*';
         /*for (Entity entity : stillObjects) {
             int x1 = entity.getX();
             int y1 = entity.getY();
@@ -98,7 +104,7 @@ public class Bomber extends Character {
     public void powerUp(Item item) {
         // Tăng độ dài flame
         if (item instanceof flameItem) {
-            Flame.length++;
+            Flame.powerFlames++;
         }
 
         // Tăng tốc độ x2
@@ -113,56 +119,13 @@ public class Bomber extends Character {
     }
 
     void putBomb() {
+        BombermanGame.bombSound.play(true, 0);
         activeObjects.add(new Bomb(getX() / Sprite.SCALED_SIZE, getY() / Sprite.SCALED_SIZE,
                 Sprite.bomb.getFxImage(), powerFlames));
-        System.gc();
     }
-
-    private boolean checkEnemy(int x, int y) {
-        for (Entity entity : activeObjects) {
-            if (entity instanceof Balloon) {
-                int xEnemy = entity.getX();
-                int yEnemy = entity.getY();
-                return x == xEnemy && y == yEnemy || x == xEnemy - 1 && y == yEnemy
-                        || x == xEnemy && y == yEnemy - 1 || x == xEnemy + 1 && y == yEnemy || x == xEnemy && y == yEnemy + 1;
-            }
-        }
-        return false;
-    }
-
-        /*private void checkEnemy() {
-            int ax = player.getX() / 32;
-            int ay = player.getY() / 32;
-            for (Animal animal : enemy) {
-                int bx = animal.getX() / 32;
-                int by = animal.getY() / 32;
-                if (ax == bx && ay == by
-                        || ax == bx && ay == by + 1 || ax == bx && ay == by - 1
-                        || ay == by && ax == bx + 1 || ay == by && ax == bx - 1) {
-                    player.life = false;
-                    break;
-                }
-            }
-        }
-
-        private void checkEnemy2() {    //easy level
-            int ax = player.getX();
-            int ay = player.getY();
-            for (Animal animal : enemy)
-                if (ax == animal.getX() && ay == animal.getY()
-                        || ax == animal.getX() && ay == animal.getY() - 32
-                        || ax == animal.getX() && ay == animal.getY() + 32
-                        || ay == animal.getY() && ax == animal.getX() - 32
-                        || ay == animal.getY() && ax == animal.getX() + 32) {
-                    player.life = false;
-                    break;
-                }
-        }
-
-    }*/
 
     public void handleKeyEvent(KeyEvent keyEvent) {
-        if (animation > 100) animation = 0;
+        if (animation > 200) animation = 0;
         else animation++;
         switch (keyEvent.getCode()) {
             case UP:
@@ -185,6 +148,48 @@ public class Bomber extends Character {
 
     @Override
     public void update() {
+        if (!alive) {
+            animationTime--;
+            if (animationTime < 0) {
+                delete = true;
+                active = false;
+                deadSound.play(false, 0);
+            } else {
+                if (!deadSound.isPlaying()) {
+                    deadSound.play(true, 0);
+                }
+                setImg(Sprite.movingSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, animationTime, 30).getFxImage());
+            }
+        }
+    }
 
+    /**
+     * Xử lý va chạm của Bomber với các entity khác.
+     * @param entity đối tượng va chạm
+     */
+    public void collide(activeEntity entity) {
+        // Nếu bomber hoặc entity chết thì ko làm gì
+        if (!entity.alive || !active || entity instanceof Bomber) {
+            return;
+        }
+        int xBomber = getX() / Sprite.SCALED_SIZE;
+        int yBomber = getY() / Sprite.SCALED_SIZE;
+
+        int xEntity = entity.getX() / Sprite.SCALED_SIZE;
+        int yEntity = entity.getY() / Sprite.SCALED_SIZE;
+
+        if (xBomber == xEntity && yBomber == yEntity) {
+            if (entity instanceof Character) {
+                alive = false;
+            }
+            if (entity instanceof Item) {
+                Item item = (Item) entity;
+                powerUp(item);
+                item.setActive(true);
+            }
+            if (entity instanceof Portal) {
+                BombermanGame.levelUp = true;
+            }
+        }
     }
 }

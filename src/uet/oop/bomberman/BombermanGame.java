@@ -9,8 +9,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import uet.oop.bomberman.Sound.Sound;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.activeObject.Character.Balloon;
+import uet.oop.bomberman.entities.activeObject.Bomb.Flame;
 import uet.oop.bomberman.entities.activeObject.Character.Bomber;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
@@ -30,6 +31,8 @@ public class BombermanGame extends Application {
     public static int height = 0;
     public static int level = 1;
 
+    public static boolean levelUp = false;
+
     private GraphicsContext gc;
     private Canvas canvas;
 
@@ -37,6 +40,12 @@ public class BombermanGame extends Application {
     public static List<activeEntity> activeObjects = new ArrayList<>();
 
     public static Bomber bomber;
+
+    /*
+    -------SOUND-------
+     */
+    public static Sound bombSound = new Sound("bombSound");
+    public static Sound deadSound = new Sound("deadSound");
 
 
     public static void main(String[] args) {
@@ -98,13 +107,16 @@ public class BombermanGame extends Application {
             entity.update();
         }
 
-        for (activeEntity entity : activeObjects) {
-            entity.update();
+        for (int i = 0; i < activeObjects.size(); i++) {
+            activeObjects.get(i).update();
+            for (int j = 0; j < activeObjects.size(); j++) {
+                activeObjects.get(i).collide(activeObjects.get(j));
+            }
         }
 
-        for (activeEntity entity : activeObjects) {
-           if (entity.delete) {
-               activeObjects.remove(entity);
+        for (int i = 0; i < activeObjects.size(); i++) {
+            if (activeObjects.get(i).delete) {
+                activeObjects.remove(activeObjects.get(i));
             }
         }
     }
