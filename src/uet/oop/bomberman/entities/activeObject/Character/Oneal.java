@@ -1,12 +1,11 @@
 package uet.oop.bomberman.entities.activeObject.Character;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import uet.oop.bomberman.entities.activeObject.Character.Character;
+import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.mediumMove;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.loadMap;
+
 import java.util.Random;
-import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.*;
 
 public class Oneal extends Character {
 
@@ -23,7 +22,8 @@ public class Oneal extends Character {
         super(x, y, img);
 
         // Tốc độ random
-        speed = random.nextInt( 3);
+        speed = random.nextInt(2);
+
     }
 
     /**
@@ -31,26 +31,40 @@ public class Oneal extends Character {
      */
     @Override
     public void moveUp() {
-        this.setY(this.getY() - speed);
-        this.setImg(Sprite.movingSprite(Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3, animation, 20).getFxImage());
+        if (canMove(getX(), getY() - speed, BombermanGame.map)) {
+            setY(getY() - speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveDown() {
-        this.setY(this.getY() + speed);
-        this.setImg(Sprite.movingSprite(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3, animation, 20).getFxImage());
+        if (canMove(getX(), getY() - speed, BombermanGame.map)) {
+            setY(getY() - speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveLeft() {
-        this.setX(this.getX() - speed);
-        this.setImg(Sprite.movingSprite(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3, animation, 20).getFxImage());
+        if (canMove(getX() - speed, getY(), BombermanGame.map)) {
+            setX(getX() - speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveRight() {
-        this.setX(this.getX() + speed);
-        this.setImg(Sprite.movingSprite(Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3, animation, 20).getFxImage());
+        if (canMove(getX() + speed, getY(), BombermanGame.map)) {
+            setX(getX() + speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3, animation, 20).getFxImage());
+    }
+
+    public boolean canMove(int x, int y, char[][] map) {
+        int xUnit = getY() / Sprite.SCALED_SIZE;
+        int yUnit = getX() / Sprite.SCALED_SIZE;
+        return map[xUnit][yUnit] != '*' && map[xUnit][yUnit] != '#';
     }
 
     /**
@@ -82,7 +96,7 @@ public class Oneal extends Character {
         if (animation > 100) {
             animation = 0;
         }
-        if (!active) {
+        if (!alive) {
             animationTime--;
             if (animationTime < 0) {
                 delete = true;
@@ -98,12 +112,13 @@ public class Oneal extends Character {
             if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
                 int xMap = getY() / Sprite.SCALED_SIZE;
                 int yMap = getX() / Sprite.SCALED_SIZE;
-                randomDirection = mediumMove.getDirection(xMap, yMap, loadMap.map);
+                randomDirection = mediumMove.getDirection(xMap, yMap, BombermanGame.map);
+                speed = random.nextInt(2);
                 randomTimeInterval = 60;
             } else {
                 randomTimeInterval--;
             }
-         //   Move();
+            Move();
 
         }
     }
