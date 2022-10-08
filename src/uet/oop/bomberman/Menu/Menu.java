@@ -4,7 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
@@ -18,44 +17,47 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.Sound.Sound;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Objects;
+
+import static uet.oop.bomberman.Main.scene2;
+import static uet.oop.bomberman.Main.scene1;
+import static uet.oop.bomberman.Main.stage;
 
 /**
  * menu0 game chính.
  */
 public class Menu {
-    public static void createMenu(Stage stage, Group root, Scene scene) throws IOException {
-
-        Gamemenu gamemenu = new Gamemenu();
-
-        stage.setTitle("Bomberman ver 1.0");
+    public static Scene menu() throws IOException, URISyntaxException {
         Pane pane = new Pane();
         pane.setPrefSize(800, 640);
 
-       // InputStream path = Files.newInputStream(Paths.get("res/textures/menu.png"));
-        Image image = new Image("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png");
+        Group root = new Group();
+        scene1 = new Scene(root);
+
+        Gamemenu gamemenu = new Gamemenu();
+
+         Image image = new Image("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png");
         ImageView background = new ImageView(image);
 
         // Tao root container
         root.getChildren().addAll(background, gamemenu);
 
-        scene.setOnKeyPressed(keyEvent -> {
+        scene1.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
                 System.exit(0);
             }
         });
 
-        // Them vao scene
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        return scene1;
     }
 
     /**
@@ -94,28 +96,7 @@ public class Menu {
 
             // New game button
             menuButton newGameButton = new menuButton("NEW GAME");
-            newGameButton.setOnMouseClicked(event -> {
-                getChildren().add(menu4);
-
-                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu0);
-                tt.setToX(menu0.getTranslateX() - offset);
-
-                TranslateTransition tt1 = new TranslateTransition(Duration.seconds(0.5), menu4);
-                tt1.setToX(menu0.getTranslateX());
-
-                tt.play();
-                tt1.play();
-
-                tt.setOnFinished(event1 -> {
-                    getChildren().remove(menu0);
-                });
-                try {
-                    gameWindow menuBoard = new gameWindow();
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-
-            });
+            newGameButton.setOnMouseClicked(event -> stage.setScene(scene2));
 
             // Resume button
             menuButton resumeButton = new menuButton("RESUME");
@@ -141,17 +122,15 @@ public class Menu {
                 tt.play();
                 tt1.play();
 
-                tt.setOnFinished(event1 -> {
-                    getChildren().remove(menu0);
-                });
+                tt.setOnFinished(event1 -> getChildren().remove(menu0));
             });
 
             String tutorialName = "C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\tutorial.png";
             textMenu tutorial = new textMenu(tutorialName, 300, 250);
 
             // Sound Button
-           Sound bacgroundSound = new Sound("start");
-           bacgroundSound.play(true, 0);
+            Sound bacgroundSound = new Sound("start");
+            bacgroundSound.play(true, 0);
 
             menuButton soundButton = new menuButton("SOUND");
             soundButton.setOnMouseClicked(event -> {
@@ -166,23 +145,17 @@ public class Menu {
                 tt.play();
                 tt1.play();
 
-                tt.setOnFinished(event1 -> {
-                    getChildren().remove(menu0);
-                });
+                tt.setOnFinished(event1 -> getChildren().remove(menu0));
 
             });
 
             // Mute Sound
             menuButton mute = new menuButton("MUTE");
-            mute.setOnMouseClicked(event -> {
-                bacgroundSound.play(false, 0);
-            });
+            mute.setOnMouseClicked(event -> bacgroundSound.play(false, 0));
 
             // Unmute Sound
             menuButton unMute = new menuButton("UNMUTE");
-            unMute.setOnMouseClicked(event -> {
-                bacgroundSound.play(true, 0);
-            });
+            unMute.setOnMouseClicked(event -> bacgroundSound.play(true, 0));
 
             // Back from menu 2 to menu 0
             menuButton backButton2 = new menuButton("BACK");
@@ -198,10 +171,7 @@ public class Menu {
                 tt.play();
                 tt1.play();
 
-                tt.setOnFinished(event1 -> {
-                    getChildren().remove(menu2);
-                });
-
+                tt.setOnFinished(event1 -> getChildren().remove(menu2));
             });
 
             // About button
@@ -218,16 +188,28 @@ public class Menu {
                 tt.play();
                 tt1.play();
 
-                tt.setOnFinished(event1 -> {
-                    getChildren().remove(menu0);
-                });
+                tt.setOnFinished(event1 -> getChildren().remove(menu0));
+            });
+
+            menuButton backButton3 = new menuButton("BACK");
+            backButton3.setOnMouseClicked(event -> {
+                getChildren().add(menu0);
+
+                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu3);
+                tt.setToX(menu3.getTranslateX() + offset);
+
+                TranslateTransition tt1 = new TranslateTransition(Duration.seconds(0.5), menu0);
+                tt1.setToX(menu3.getTranslateX());
+
+                tt.play();
+                tt1.play();
+
+                tt.setOnFinished(event1 -> getChildren().remove(menu3));
             });
 
             // Exit button
             menuButton exitButton = new menuButton("EXIT");
-            exitButton.setOnMouseClicked(event -> {
-                System.exit(0);
-            });
+            exitButton.setOnMouseClicked(event -> System.exit(0));
 
             // Back button
             menuButton backButton1 = new menuButton("BACK");
@@ -243,25 +225,20 @@ public class Menu {
                 tt.play();
                 tt1.play();
 
-                tt.setOnFinished(event1 -> {
-                    getChildren().remove(menu1);
-                });
+                tt.setOnFinished(event1 -> getChildren().remove(menu1));
 
             });
 
             // Thêm các button vào menu
             menu0.getChildren().addAll(newGameButton, tutorialButton,
                     aboutButton, soundButton, exitButton);
-
             menu1.getChildren().addAll(tutorial, backButton1);
-
             menu2.getChildren().addAll(mute, unMute, backButton2);
-
-            //menu4.getChildren().addAll(gameWindow);
+            menu3.getChildren().add(backButton3);
 
             Rectangle bg = new Rectangle(800, 640);
             bg.setFill(Color.GREY);
-            bg.setOpacity(0.4);
+            bg.setOpacity(0.2);
 
             getChildren().addAll(bg, menu0);
         }
@@ -273,7 +250,7 @@ public class Menu {
     private static class menuButton extends StackPane {
         public menuButton(String name) {
             Text text = new Text(name);
-            text.setFont(text.getFont().font(20));
+            text.setFont(Font.font(20));
             text.setFill(Color.WHITE);
             text.setTextAlignment(TextAlignment.CENTER);
 
@@ -312,7 +289,7 @@ public class Menu {
      * Load tutorial.
      */
     private static class textMenu extends StackPane {
-        public textMenu(String path, int width, int height) throws IOException {
+        public textMenu(String path, int width, int height) {
             // Load tutorial image
             Image img = new Image(path);
             ImageView imageView = new ImageView(img);

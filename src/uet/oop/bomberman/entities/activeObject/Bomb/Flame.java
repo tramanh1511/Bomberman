@@ -13,7 +13,7 @@ public class Flame extends activeEntity {
 
     public static int timeExplode = 0;    // Thời gian đếm ngược trc khi xuất hiên flame
 
-    public int timeAfter = 40; // Thời gian xuất hiện flame
+    public int timeAfter = 30; // Thời gian xuất hiện flame
 
     /**
      * Tạo flame.

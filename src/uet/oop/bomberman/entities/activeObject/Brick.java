@@ -1,10 +1,9 @@
 package uet.oop.bomberman.entities.activeObject;
 
-import javafx.scene.effect.FloatMap;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.loadMap;
+import uet.oop.bomberman.graphics.Map;
 
 public class Brick extends activeEntity {
 
@@ -20,7 +19,7 @@ public class Brick extends activeEntity {
             if (animationTime < 0) { // Nếu đã hết thời gian sau khi nổ
                 int xBrick = getY() / Sprite.SCALED_SIZE;
                 int yBrick = getX() / Sprite.SCALED_SIZE;
-                loadMap.map[xBrick][yBrick] = ' ';
+                BombermanGame.map[xBrick][yBrick] = ' ';
                 delete = true; // Xoá
                 active = false;
             }

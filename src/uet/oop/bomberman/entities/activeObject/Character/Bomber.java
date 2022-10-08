@@ -3,7 +3,6 @@ package uet.oop.bomberman.entities.activeObject.Character;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.Sound.Sound;
 import uet.oop.bomberman.entities.activeObject.Bomb.Bomb;
 import uet.oop.bomberman.entities.activeObject.Bomb.Flame;
 import uet.oop.bomberman.entities.activeObject.Item.Item;
@@ -13,10 +12,8 @@ import uet.oop.bomberman.entities.activeObject.Item.speedItem;
 import uet.oop.bomberman.entities.activeObject.Portal;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.loadMap;
 
-import static uet.oop.bomberman.BombermanGame.activeObjects;
-import static uet.oop.bomberman.BombermanGame.deadSound;
+import static uet.oop.bomberman.BombermanGame.*;
 
 
 /**
@@ -24,8 +21,8 @@ import static uet.oop.bomberman.BombermanGame.deadSound;
  */
 public class Bomber extends Character {
 
-    public int bombCount = 1;
-    public int powerFlames;
+    public int bombCount = 1; // Số lượng bomb nhả ra mỗi lần
+    public int powerFlames; // Độ dài của flame
 
     public int animationTime = 90;
     /**
@@ -35,9 +32,21 @@ public class Bomber extends Character {
         super(x, y, image);
 
         speed = 32; // Tốc độ ban đầu
-        bombCount = 1; // Số lượng bomb nhả ra mỗi lần
-        powerFlames = 1; // Độ dài của flame
+        bombCount = 1;
+        powerFlames = 1;
         active = true;
+    }
+
+    public void setPowerFlames(int powerFlames) {
+        this.powerFlames = powerFlames;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public void setbombCount(int bombCount) {
+        this.bombCount = bombCount;
     }
 
     /**
@@ -45,7 +54,7 @@ public class Bomber extends Character {
      */
     @Override
     public void moveUp() {
-        if (canMove(getX(), getY() - speed, loadMap.map)) {
+        if (canMove(getX(), getY() - speed, BombermanGame.map)) {
             setY(getY() - speed);
         }
         this.setImg(Sprite.movingSprite(Sprite.player_up, Sprite.player_up_1,
@@ -54,7 +63,7 @@ public class Bomber extends Character {
 
     @Override
     public void moveDown() {
-        if (canMove(getX(), getY() + speed, loadMap.map)) {
+        if (canMove(getX(), getY() + speed, BombermanGame.map)) {
             setY(getY() + speed);
         }
         this.setImg(Sprite.movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, animation, 20).getFxImage());
@@ -62,7 +71,7 @@ public class Bomber extends Character {
 
     @Override
     public void moveLeft() {
-        if (canMove(getX() - speed, getY(), loadMap.map)) {
+        if (canMove(getX() - speed, getY(), BombermanGame.map)) {
             setX(getX() - speed);
         }
         this.setImg(Sprite.movingSprite(Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2, animation, 20).getFxImage());
@@ -70,7 +79,7 @@ public class Bomber extends Character {
 
     @Override
     public void moveRight() {
-        if (canMove(getX() + speed, getY(), loadMap.map)) {
+        if (canMove(getX() + speed, getY(), BombermanGame.map)) {
             setX(getX() + speed);
         }
         this.setImg(Sprite.movingSprite(Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2, animation, 20).getFxImage());
@@ -83,49 +92,37 @@ public class Bomber extends Character {
     public boolean canMove(int x, int y, char[][] map) {
        int xUnit = (int) x / Sprite.SCALED_SIZE;
        int yUnit = (int) y / Sprite.SCALED_SIZE;
-     //  System.out.println(xUnit + " " + yUnit);
-       return map[yUnit][xUnit] != '#' &&  map[yUnit][xUnit] != '*';
-        /*for (Entity entity : stillObjects) {
-            int x1 = entity.getX();
-            int y1 = entity.getY();
-            System.out.println("bomber: " + x + " " + y);
-            if (x1 - 20 == x && y1 == y) {
-                if (entity instanceof Brick) {
-                    System.out.println(x1 + " " + y1);
-                    System.out.println("va cham");
-                    return false;
-                }
-            }
+       return map[yUnit][xUnit] != '*' && map[yUnit][xUnit] != '#';
+    }
 
+    void putBomb() {
+        BombermanGame.bombSound.play(true, 0);
+        for (int i = 0; i < bombCount; i++) {
+            int bonus = i * Sprite.SCALED_SIZE;
+            activeObjects.add(new Bomb((getX() + bonus) / Sprite.SCALED_SIZE, (getY() + bonus) / Sprite.SCALED_SIZE,
+                    Sprite.bomb.getFxImage(), powerFlames));
         }
-        return true;*/
     }
 
     public void powerUp(Item item) {
         // Tăng độ dài flame
         if (item instanceof flameItem) {
-            Flame.powerFlames++;
+           setPowerFlames(powerFlames + 1);
         }
 
         // Tăng tốc độ x2
         if (item instanceof speedItem) {
-            speed *= 2;
+            setSpeed(speed * 2);
         }
 
         // Tăng số bom 1 lần thả
         if (item instanceof bombItem) {
-            bombCount++;
+            setbombCount(bombCount + 1);
         }
     }
 
-    void putBomb() {
-        BombermanGame.bombSound.play(true, 0);
-        activeObjects.add(new Bomb(getX() / Sprite.SCALED_SIZE, getY() / Sprite.SCALED_SIZE,
-                Sprite.bomb.getFxImage(), powerFlames));
-    }
-
     public void handleKeyEvent(KeyEvent keyEvent) {
-        if (animation > 200) animation = 0;
+        if (animation > 100) animation = 0;
         else animation++;
         switch (keyEvent.getCode()) {
             case UP:
@@ -183,9 +180,10 @@ public class Bomber extends Character {
                 alive = false;
             }
             if (entity instanceof Item) {
+                powerUpSound.play(true, 0);
                 Item item = (Item) entity;
+                item.alive = false;
                 powerUp(item);
-                item.setActive(true);
             }
             if (entity instanceof Portal) {
                 BombermanGame.levelUp = true;
