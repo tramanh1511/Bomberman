@@ -1,3 +1,5 @@
+package uet.oop.bomberman.entities.activeObject.Character.moveEnemy.AStar;
+
 import java.util.*;
 
 public class AStar {
@@ -10,17 +12,17 @@ public class AStar {
     /**
      * ham khoi tao theo
      *
-     * @param Array      mang dau vao theo tung map
+     * @param Map        mang dau vao theo tung map
      * @param RowInitial hang cua diem bat dau
      * @param ColInitial cot cua diem bat dau
      * @param RowFinal   hang cua diem ket thuc
      * @param ColFinal   cot cua diem ket thuc
      */
-    public AStar(char[][] Array, int RowInitial, int ColInitial, int RowFinal, int ColFinal) {
+    public AStar(char[][] Map, int RowInitial, int ColInitial, int RowFinal, int ColFinal) {
         this.initialNode = new Node(RowInitial, ColInitial);
         this.finalNode = new Node(RowFinal, ColFinal);
-        searchArea = new Node[Array.length][Array[0].length];
-        setNodes(Array);
+        searchArea = new Node[Map.length][Map[0].length];
+        setNodes(Map);
         openList = new PriorityQueue<>(Comparator.comparingInt(Node::getF)); // uu tien theo f nho
         closedSet = new HashSet<>();
     }
@@ -30,12 +32,12 @@ public class AStar {
      * Trong do: row, col, h, isBlocked la nhung cai tim luon duoc
      * g, f, parent la nhung cai update trong qua trinh tim kiem
      */
-    public void setNodes(char[][] Array) {
+    public void setNodes(char[][] Map) {
         for (int i = 0; i < searchArea.length; i++) {
             for (int j = 0; j < searchArea[0].length; j++) {
                 searchArea[i][j] = new Node(i, j);
                 searchArea[i][j].calculateH(finalNode);
-                searchArea[i][j].setBlocked(Array[i][j] != ' ');
+                searchArea[i][j].setBlocked(Map[i][j] == '#' || Map[i][j] == '*');
             }
         }
     }
@@ -82,11 +84,11 @@ public class AStar {
     }
 
     public void updateClosedNode(Node currentNode) {
-        int[] X = {0, 0, 1, 1, 1, -1, -1, -1}; // X[i] va Y[i] tuong ung voi 8 huong xung quanh currentNode
-        int[] Y = {-1, 1, -1, 0, 1, -1, 0, 1};
+        int[] X = {0, 0, -1, 1}; // X[i] va Y[i] tuong ung voi 4 huong xung quanh currentNode
+        int[] Y = {-1, 1, 0, 0};
         int rows = searchArea.length;
         int cols = searchArea[0].length;
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < X.length; i++) {
             int RowClosedNode = currentNode.getRow() + X[i];
             int ColClosedNode = currentNode.getCol() + Y[i];
             if (RowClosedNode >= 0 && RowClosedNode < rows          // khi ClosedNode nam trong vung hop le
@@ -106,5 +108,5 @@ public class AStar {
     private boolean isEmpty(PriorityQueue<Node> openList) {
         return openList.size() == 0;
     }
-
 }
+

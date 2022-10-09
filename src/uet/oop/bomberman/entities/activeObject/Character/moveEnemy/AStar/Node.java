@@ -1,3 +1,5 @@
+package uet.oop.bomberman.entities.activeObject.Character.moveEnemy.AStar;
+
 public class Node {
     private int row; // hang
     private int col; // cot
