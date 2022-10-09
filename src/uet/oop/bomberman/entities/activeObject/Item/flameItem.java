@@ -6,5 +6,5 @@ public class flameItem extends Item {
     public flameItem(int x, int y, Image img) {
         super(x, y, img);
     }
-    public void update() {}
+
 }
