@@ -2,17 +2,15 @@ package uet.oop.bomberman.entities.activeObject.Bomb;
 
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.Sound.Sound;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.loadMap;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Bomb extends activeEntity {
-    protected int timeAfter = 40;
+    protected int timeAfter = 30;
     public int powerFlames = 0;
-    public int timeExplode = 120;
+    public int timeExplode = 90;
     public boolean added = false;
 
     public List<Flame> flameList = new ArrayList<>();
@@ -23,6 +21,7 @@ public class Bomb extends activeEntity {
         active = true;
         delete = false;
         createFlame();
+        System.out.println(powerFlames);
     }
 
     public void createFlame() {
@@ -34,7 +33,7 @@ public class Bomb extends activeEntity {
                 // Mảng dx, dy dùng để duyệt theo 4 hướng up, down, left, right.
                 int[] dy = {-i, i, 0, 0};
                 int[] dx = {0, 0, -i, i};
-                char tile = loadMap.map[yBomb + dy[k]][xBomb + dx[k]];
+                char tile = loadBombermanGame.map[yBomb + dy[k]][xBomb + dx[k]];
                 if (tile != '#') {
                     // Nếu là flame cuối hoặc gặp tường
                     if (i == powerFlames || tile == '*') {
@@ -52,7 +51,7 @@ public class Bomb extends activeEntity {
         for (int i = 1; i <= powerFlames; i++) {
             int x = getX() / Sprite.SCALED_SIZE;
             int y = getY() / Sprite.SCALED_SIZE;
-            char tile = loadMap.map[y - i][x];
+            char tile = BombermanGame.map[y - i][x];
             if (tile != '#') {
                 // Nếu là flame cuối hoặc gặp tường
                 if (i == powerFlames || tile == '*') {
@@ -69,7 +68,7 @@ public class Bomb extends activeEntity {
         for (int i = 1; i <= powerFlames; i++) {
             int x = getX() / Sprite.SCALED_SIZE;
             int y = getY() / Sprite.SCALED_SIZE;
-            char tile = loadMap.map[y + i][x];
+            char tile = BombermanGame.map[y + i][x];
             if (tile != '#') {
                 // Nếu là flame cuối hoặc gặp tường
                 if (i == powerFlames || tile == '*') {
@@ -86,7 +85,7 @@ public class Bomb extends activeEntity {
         for (int i = 1; i <= powerFlames; i++) {
             int x = getX() / Sprite.SCALED_SIZE;
             int y = getY() / Sprite.SCALED_SIZE;
-            char tile = loadMap.map[y][x - i];
+            char tile = BombermanGame.map[y][x - i];
             if (tile != '#') {
                 // Nếu là flame cuối hoặc gặp tường
                 if (i == powerFlames || tile == '*') {
@@ -103,7 +102,7 @@ public class Bomb extends activeEntity {
         for (int i = 1; i <= powerFlames; i++) {
             int x = getX() / Sprite.SCALED_SIZE;
             int y = getY() / Sprite.SCALED_SIZE;
-            char tile = loadMap.map[y][x + i];
+            char tile = BombermanGame.map[y][x + i];
             if (tile != '#') {
                 // Nếu là flame cuối hoặc gặp tường
                 if (i == powerFlames || tile == '*') {

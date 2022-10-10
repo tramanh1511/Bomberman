@@ -25,7 +25,4 @@ public abstract class activeEntity extends Entity {
 
     }
 
-    public void update() {
-
-    }
 }

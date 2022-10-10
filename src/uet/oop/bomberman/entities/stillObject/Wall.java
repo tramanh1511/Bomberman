@@ -1,5 +1,6 @@
 package uet.oop.bomberman.entities.stillObject;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.entities.Entity;
 
@@ -12,6 +13,5 @@ public class Wall extends Entity {
 
     @Override
     public void update() {
-
     }
 }
