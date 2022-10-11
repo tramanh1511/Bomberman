@@ -3,6 +3,7 @@ package uet.oop.bomberman;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import uet.oop.bomberman.entities.activeObject.Character.Bomber;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,15 +15,18 @@ public class Main extends Application {
     public static Stage stage;
     public static Scene scene1; // Scene chứa menu
     public static Scene scene2; // Scene chứa gameboard
-    public static Scene scene3; // Scene win hay gameover
+    public static Scene scene3; // Scene gameover
+    public static Scene scene4; // Scene victory
 
     @Override
     public void start(Stage primaryStage) throws IOException, URISyntaxException {
         stage = primaryStage;
-        stage.setTitle("BOMBERMAN VER 1.0");
+        stage.setTitle("BOMBERMAN VER 2.0");
 
         scene1 = BombermanGame.createScene1();
         scene2 = BombermanGame.createScene2();
+        scene3 = BombermanGame.createScene3();
+        scene4 = BombermanGame.createScene4();
 
         stage.setScene(scene1);
         stage.setResizable(false);

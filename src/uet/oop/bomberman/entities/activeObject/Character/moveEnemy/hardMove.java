@@ -19,7 +19,7 @@ public class hardMove {
      * @param y   tọa độ cột trên map
      * @param map lưu map từ file level
      */
-    public static int getDirection(int x, int y, char[][] map) {
+    public static int getDirection(int x, int y, int speed, char[][] map) {
         for (int i = 0; i < BombermanGame.activeObjects.size(); i++) {
             if (BombermanGame.activeObjects.get(i) instanceof Bomber) {
                 Bomber bomber = (Bomber) BombermanGame.activeObjects.get(i);
@@ -31,7 +31,7 @@ public class hardMove {
                 List<Node> resultPath = aStar.aStarSearch(); // duong di luu cac node tu vi tri Bomber den Enemy
                 if (resultPath != null) {
                     Node nextNode = resultPath.get(resultPath.size() - 2); //  Node tai vi tri truoc enemy trong duong di
-                                                                           // chinh la buoc tiep Enemy chon di
+                    // chinh la buoc tiep Enemy chon di
                     if (x - 1 == nextNode.getRow()) {
                         return 0; // up
                     } else if (x + 1 == nextNode.getRow()) {
@@ -40,28 +40,10 @@ public class hardMove {
                         return 2; // left
                     } else if (y + 1 == nextNode.getCol()) {
                         return 3; // right
-                    } else {
-                        return mediumMove.getDirection(x, y, map);
                     }
                 }
             }
         }
-        return mediumMove.getDirection(x, y, map);
-=======
-/**
- * Thuật toán di chuyển đường đi cho enemy thông minh nhất :) tìm mọi cách kill bomber.
- */
-
-public class hardMove {
-    /**
-     * Ứng dụng thuật toán tìm đường A*.
-     * @param x tọa độ hàng trên map
-     * @param y tọa độ cột trên map
-     * @param map tọa độ map
-     * @return đường đi đuổi theo bomber
-     */
-    public static int getDirection(int x, int y, char[][] map) {
-
-        return 1;
+        return mediumMove.getDirection(x, y, speed, map);
     }
 }

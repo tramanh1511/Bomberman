@@ -18,7 +18,7 @@ public class Sound {
     }
 
     public void play(Boolean playing, int loop) {
-        if (playing == false) {
+        if (!playing) {
             if (clip.isRunning()) {
                 clip.stop();
             }
@@ -26,7 +26,6 @@ public class Sound {
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
-
     }
 
     public boolean isPlaying() {

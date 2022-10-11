@@ -15,18 +15,15 @@ public abstract class Item extends activeEntity {
     public Item(int x, int y, Image img) {
         super(x, y, img);
         active = false;
-
     }
 
     public void update() {
-        if (!alive) {
-            int x = getY() / Sprite.SCALED_SIZE;
-            int y = getX() / Sprite.SCALED_SIZE;
+        if (active) {
+            int x = getYMap();
+            int y = getXMap();
             BombermanGame.map[x][y] = ' ';
             delete = true; // Xoá
-            active = true;
         }
-
     }
 
 }

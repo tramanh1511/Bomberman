@@ -14,14 +14,13 @@ public class Brick extends activeEntity {
 
     @Override
     public void update() {
-        if (!alive) {
+        if (!active) {
             animationTime--; // Đếm ngược bom nổ
             if (animationTime < 0) { // Nếu đã hết thời gian sau khi nổ
-                int xBrick = getY() / Sprite.SCALED_SIZE;
-                int yBrick = getX() / Sprite.SCALED_SIZE;
+                int xBrick = getYMap();
+                int yBrick = getXMap();
                 BombermanGame.map[xBrick][yBrick] = ' ';
                 delete = true; // Xoá
-                active = false;
             }
             // Animation brick nổ
             setImg(Sprite.movingSprite(Sprite.brick_exploded, Sprite.brick_exploded1, Sprite.brick_exploded2, animationTime, 20).getFxImage());

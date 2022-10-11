@@ -3,16 +3,17 @@ package uet.oop.bomberman.graphics;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Brick;
 import uet.oop.bomberman.entities.activeObject.Character.Balloon;
+import uet.oop.bomberman.entities.activeObject.Character.Doll;
 import uet.oop.bomberman.entities.activeObject.Character.Oneal;
 import uet.oop.bomberman.entities.activeObject.Item.bombItem;
 import uet.oop.bomberman.entities.activeObject.Item.flameItem;
 import uet.oop.bomberman.entities.activeObject.Item.speedItem;
-import uet.oop.bomberman.entities.activeObject.Portal;
+import uet.oop.bomberman.entities.activeObject.Item.wallItem;
+import uet.oop.bomberman.entities.activeObject.Item.Portal;
 import uet.oop.bomberman.entities.stillObject.Grass;
 import uet.oop.bomberman.entities.stillObject.Wall;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -21,7 +22,6 @@ import static uet.oop.bomberman.BombermanGame.*;
 /**
  * Load map từ file cấu hình Level.
  */
-
 public final class Map {
     public static char[][] readMap(String path) throws IOException {
         char[][] map = new char[BombermanGame.HEIGHT][BombermanGame.WIDTH];
@@ -40,7 +40,6 @@ public final class Map {
                 }
             }
             in.close();
-           // reader.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -65,6 +64,7 @@ public final class Map {
                         break;
                     // Portal
                     case 'x':
+                        BombermanGame.map[i][j] = '*';
                         // Layer 1: Add grass
                         stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                         // Layer 2: Add portal
@@ -85,6 +85,13 @@ public final class Map {
                         stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                         // Layer 2: Add balloon
                         activeObjects.add(new Oneal(j, i, Sprite.oneal_right1.getFxImage()));
+                        break;
+                    // Doll
+                    case '3':
+                        // Layer 1: Add grass
+                        stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                        // Layer 2: Add doll
+                        activeObjects.add(new Doll(j, i, Sprite.doll_right1.getFxImage()));
                         break;
                     // Bomb Item
                     case 'b':
@@ -113,6 +120,16 @@ public final class Map {
                         stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                         // Layer 2: Add powerup_speed
                         activeObjects.add(new speedItem(j, i, Sprite.powerup_speed.getFxImage()));
+                        // Layer 3: Add brick
+                        activeObjects.add(new Brick(j, i, Sprite.brick.getFxImage()));
+                        break;
+                    // Wall item
+                    case 'w':
+                        BombermanGame.map[i][j] = '*';
+                        // Layer 1: Add grass
+                        stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                        // Layer 2: Add powerup_speed
+                        activeObjects.add(new wallItem(j, i, Sprite.powerup_wallpass.getFxImage()));
                         // Layer 3: Add brick
                         activeObjects.add(new Brick(j, i, Sprite.brick.getFxImage()));
                         break;

@@ -7,6 +7,10 @@ import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.easyMove;
 import uet.oop.bomberman.graphics.Sprite;
 import static uet.oop.bomberman.BombermanGame.deadSound;
 
+
+/**
+ * Enemy balloon di chuyển ngẫu nhiên với speed = 1, ko biết tránh bom :v.
+ */
 public class Balloon extends Character {
     // Biến random hướng đi của Balloon
     private int randomDirection = 2;
@@ -78,12 +82,11 @@ public class Balloon extends Character {
         if (animation > 100) {
             animation = 0;
         }
-        if (!alive) {
+        if (!active) {
             animationTime--;
             if (animationTime < 0) {
                 deadSound.play(false, 1);
                 delete = true;
-                active = false;
             } else {
                 // Animation ballon chết
                 if (!deadSound.isPlaying()) {
@@ -97,8 +100,8 @@ public class Balloon extends Character {
             }
         } else {
             if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval < 0) {
-                int xMap = getY() / Sprite.SCALED_SIZE;
-                int yMap = getX() / Sprite.SCALED_SIZE;
+                int xMap = getYMap();
+                int yMap = getXMap();
                 randomDirection = easyMove.getDirection(xMap, yMap, BombermanGame.map);
                 randomTimeInterval = 30;
             } else {
@@ -106,9 +109,5 @@ public class Balloon extends Character {
             }
             Move();
         }
-    }
-
-    public void render(GraphicsContext gc) {
-        gc.drawImage(img, x, y);
     }
 }

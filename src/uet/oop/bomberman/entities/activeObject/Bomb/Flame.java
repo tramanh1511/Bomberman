@@ -1,18 +1,21 @@
 package uet.oop.bomberman.entities.activeObject.Bomb;
 
 import javafx.scene.image.Image;
-import uet.oop.bomberman.entities.activeObject.Character.Character;
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Item.Item;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Flame extends activeEntity {
     public int direction;
     public boolean last; // xem có là flame cuối hay ko (last = true)
-    public static int powerFlames = 1;
+    public int powerFlames = 1;
+    public List<Flame> flameList = new ArrayList<>();
 
-    public static int timeExplode = 0;    // Thời gian đếm ngược trc khi xuất hiên flame
-
+    public int timeExplode = 0;    // Thời gian đếm ngược trc khi xuất hiên flame
     public int timeAfter = 30; // Thời gian xuất hiện flame
 
     /**
@@ -30,6 +33,32 @@ public class Flame extends activeEntity {
         this.last = last;
         delete = false;
         active = false;
+    }
+
+    public void createFlame() {
+        int[] direction = {0, 1, 2, 3};
+
+        // Duyệt theo 4 hướng
+        for (int k = 0; k < 4; k++) {
+            for (int i = 1; i <= powerFlames; i++) {
+                int xBomb = getXMap();
+                int yBomb = getYMap();
+                // Mảng dx, dy dùng để tạo flame theo 4 hướng up, down, left, right.
+                int[] dy = {-i, i, 0, 0};
+                int[] dx = {0, 0, -i, i};
+                char tile = BombermanGame.map[yBomb + dy[k]][xBomb + dx[k]];
+                if (tile != '#') {
+                    if (i == powerFlames || tile == '*') { // Nếu là flame cuối hoặc gặp vật cản
+                        flameList.add(new Flame(xBomb + dx[k], yBomb + dy[k], direction[k], true, Sprite.explosion_vertical.getFxImage()));
+                        break;
+                    } else { // Flame bình thường
+                        flameList.add(new Flame(xBomb + dx[k], yBomb + dy[k], direction[k], false, Sprite.explosion_vertical.getFxImage()));
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -91,15 +120,14 @@ public class Flame extends activeEntity {
     public void collide(activeEntity entity) {
         // Nếu flame chưa kích hoạt || entity chết
         // hoặc va chạm với flame khác || powerup thì ko làm gì cả
-        if (!active || !entity.alive || entity instanceof Flame || entity instanceof Item) {
+        if (!active || !entity.active || entity instanceof Flame || entity instanceof Item) {
             return;
         }
 
-        int xEntity = entity.getX() / Sprite.SCALED_SIZE;
-        int yEntity = entity.getY() / Sprite.SCALED_SIZE;
-
-        int xFlame = getX() / Sprite.SCALED_SIZE;
-        int yFlame = getY() / Sprite.SCALED_SIZE;
+        int xFlame = getXMap();
+        int yFlame = getYMap();
+        int xEntity = entity.getXMap();
+        int yEntity = entity.getYMap();
 
         // Va chạm với các entity khác.
         if (xEntity == xFlame && yEntity == yFlame) {
@@ -109,11 +137,8 @@ public class Flame extends activeEntity {
                 bomb.timeExplode = 0; // Cho nổ luôn
                 return;
             }
-
             // Gặp các entity khác
-            if (entity instanceof activeEntity) {
-                entity.alive = false;
-            }
+            entity.active = false;
         }
     }
 }

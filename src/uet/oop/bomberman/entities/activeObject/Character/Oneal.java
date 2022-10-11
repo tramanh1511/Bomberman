@@ -3,9 +3,14 @@ package uet.oop.bomberman.entities.activeObject.Character;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.mediumMove;
+import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
-
 import java.util.Random;
+
+/**
+ * Enemy Oneal di chuyển với tốc độ random từ 1->2
+ * Bomber đến gần oneal thì oneal có khả năng đuổi theo.
+ */
 
 public class Oneal extends Character {
 
@@ -62,8 +67,8 @@ public class Oneal extends Character {
     }
 
     public boolean canMove(int x, int y, char[][] map) {
-        int xUnit = getY() / Sprite.SCALED_SIZE;
-        int yUnit = getX() / Sprite.SCALED_SIZE;
+        int xUnit = getYMap();
+        int yUnit = getXMap();
         return map[xUnit][yUnit] != '*' && map[xUnit][yUnit] != '#';
     }
 
@@ -96,7 +101,7 @@ public class Oneal extends Character {
         if (animation > 100) {
             animation = 0;
         }
-        if (!alive) {
+        if (!active) {
             animationTime--;
             if (animationTime < 0) {
                 delete = true;
@@ -110,10 +115,10 @@ public class Oneal extends Character {
             }
         } else {
             if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
-                int xMap = getY() / Sprite.SCALED_SIZE;
-                int yMap = getX() / Sprite.SCALED_SIZE;
-                randomDirection = mediumMove.getDirection(xMap, yMap, BombermanGame.map);
-                speed = random.nextInt(2);
+                int xMap = getYMap();
+                int yMap = getXMap();
+                randomDirection = mediumMove.getDirection(xMap, yMap, speed, BombermanGame.map);
+                speed = random.nextInt(2); // Random lại speed
                 randomTimeInterval = 60;
             } else {
                 randomTimeInterval--;
@@ -121,6 +126,11 @@ public class Oneal extends Character {
             Move();
 
         }
+    }
+
+    @Override
+    public void collide(activeEntity entity) {
+
     }
 }
 

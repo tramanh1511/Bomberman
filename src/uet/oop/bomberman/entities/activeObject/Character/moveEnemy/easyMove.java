@@ -8,7 +8,6 @@ import java.util.Random;
 public class easyMove {
     /**
      * Random hướng đi của balloon
-     *
      * @param x   tọa độ hàng trên map
      * @param y   tọa độ cột trên map
      * @param map lưu map từ file level
