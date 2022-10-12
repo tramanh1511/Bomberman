@@ -8,6 +8,7 @@
 ![image](https://user-images.githubusercontent.com/100174761/195342348-7a4adea1-0755-45b5-94e8-8d3a298187e5.png)
 
 - Link github: https://github.com/tramanh1511/Bomberman.git
+
 # ☘ Introduction
 - Bài tập lớn - Bomberman (UET) - INT2204 44 - Lập trình hướng đối tượng
 - Relax & enjoy the game :))
@@ -31,5 +32,4 @@
 - Modify options -> Add VM options VM options: -module-path "\path\to\javafx-sdk-19\lib" --add-modules javafx.controls,javafx.fxml
 
 # ☘Preview
-
 ![image](res/demo.png)
