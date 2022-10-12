@@ -20,6 +20,7 @@ public abstract class activeEntity extends Entity {
 
     /**
      * Kiểm tra sự va chạm với entity khác.
+     *
      * @param entity vật bị va chạm
      */
 

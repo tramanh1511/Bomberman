@@ -2,10 +2,12 @@ package uet.oop.bomberman.entities.activeObject.Character;
 
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.mediumMove;
-import uet.oop.bomberman.entities.activeObject.activeEntity;
+import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.hardMove;
 import uet.oop.bomberman.graphics.Sprite;
+
 import java.util.Random;
+
+import static uet.oop.bomberman.BombermanGame.map;
 
 /**
  * Enemy Oneal di chuyển với tốc độ random từ 1->2
@@ -15,20 +17,18 @@ import java.util.Random;
 public class Oneal extends Character {
 
     // Biến random hướng đi của Oneal
-    private int randomDirection = 2;
+    private int Direction = 2;
 
-    // Thời gian giữa 2 lần chuyển hướng
-    private int randomTimeInterval = 60;
+    private int animationTime = 30;
 
-    private int animationTime = 90;
     Random random = new Random();
 
     public Oneal(int x, int y, Image img) {
         super(x, y, img);
 
         // Tốc độ random
-        speed = random.nextInt(2);
-
+        speed = random.nextInt(2) + 1;
+        // speed = 1;
     }
 
     /**
@@ -36,7 +36,7 @@ public class Oneal extends Character {
      */
     @Override
     public void moveUp() {
-        if (canMove(getX(), getY() - speed, BombermanGame.map)) {
+        if (map[getYMap()][getXMap()] != '*' && map[getYMap()][getXMap()] != '#') {
             setY(getY() - speed);
         }
         setImg(Sprite.movingSprite(Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3, animation, 20).getFxImage());
@@ -44,15 +44,15 @@ public class Oneal extends Character {
 
     @Override
     public void moveDown() {
-        if (canMove(getX(), getY() - speed, BombermanGame.map)) {
-            setY(getY() - speed);
+        if (map[getYMap()][getXMap()] != '*' && map[getYMap()][getXMap()] != '#') {
+            setY(getY() + speed);
         }
         setImg(Sprite.movingSprite(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveLeft() {
-        if (canMove(getX() - speed, getY(), BombermanGame.map)) {
+        if (map[getYMap()][getXMap()] != '*' && map[getYMap()][getXMap()] != '#') {
             setX(getX() - speed);
         }
         setImg(Sprite.movingSprite(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3, animation, 20).getFxImage());
@@ -60,23 +60,24 @@ public class Oneal extends Character {
 
     @Override
     public void moveRight() {
-        if (canMove(getX() + speed, getY(), BombermanGame.map)) {
+        if (map[getYMap()][getXMap()] != '*' && map[getYMap()][getXMap()] != '#') {
             setX(getX() + speed);
         }
         setImg(Sprite.movingSprite(Sprite.oneal_right1, Sprite.oneal_right2, Sprite.oneal_right3, animation, 20).getFxImage());
     }
 
-    public boolean canMove(int x, int y, char[][] map) {
-        int xUnit = getYMap();
-        int yUnit = getXMap();
-        return map[xUnit][yUnit] != '*' && map[xUnit][yUnit] != '#';
+    public boolean canMove(int x, int y) {
+        int xUnit = y / Sprite.SCALED_SIZE;
+        int yUnit = x / Sprite.SCALED_SIZE;
+        return BombermanGame.map[xUnit][yUnit] != '#' && BombermanGame.map[xUnit][yUnit] != '*'
+                && BombermanGame.bombMap[xUnit][yUnit] == ' ';
     }
 
     /**
      * Hàm di chuyển chung.
      */
     public void Move() {
-        switch (randomDirection) {
+        switch (Direction) {
             case 0:
                 moveUp();
                 break;
@@ -98,9 +99,7 @@ public class Oneal extends Character {
     @Override
     public void update() {
         animation++;
-        if (animation > 100) {
-            animation = 0;
-        }
+
         if (!active) {
             animationTime--;
             if (animationTime < 0) {
@@ -109,28 +108,19 @@ public class Oneal extends Character {
 
             // Animation ballon chết
             if (animationTime > 60) {
-                setImg(Sprite.balloon_dead.getFxImage());
+                setImg(Sprite.oneal_dead.getFxImage());
             } else {
                 setImg(Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, animationTime, 20).getFxImage());
             }
         } else {
-            if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
+            if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0) {
                 int xMap = getYMap();
                 int yMap = getXMap();
-                randomDirection = mediumMove.getDirection(xMap, yMap, speed, BombermanGame.map);
-                speed = random.nextInt(2); // Random lại speed
-                randomTimeInterval = 60;
-            } else {
-                randomTimeInterval--;
+                Direction = hardMove.getDirection(xMap, yMap, map);
+                speed = random.nextInt(2) + 1; // Random lại speed
             }
             Move();
-
         }
-    }
-
-    @Override
-    public void collide(activeEntity entity) {
-
     }
 }
 

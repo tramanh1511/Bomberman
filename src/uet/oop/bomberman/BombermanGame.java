@@ -16,11 +16,11 @@ import uet.oop.bomberman.Menu.Menu;
 import uet.oop.bomberman.Sound.Sound;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.activeObject.Character.Bomber;
-import uet.oop.bomberman.entities.activeObject.Item.Item;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Map;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,11 +35,11 @@ public class BombermanGame {
 
     public static int width = 0;
     public static int height = 0;
-    public static int level = 1;
+    public static int level = 2;
 
-    public static boolean levelUp = false; // Kiểm tra xem đã qua màn chưa
-    public static int gameTime = 7200; // Mỗi màn chơi 120s
-    public static int delayTime = 60;
+    public static boolean portalCheck = false; // Kiểm tra xem đã qua màn chưa
+    public static int gameTime = 12000; // Mỗi màn chơi 200s
+    public static int delayTime = 100;
 
     public static int playerCount = 0;
     public static String gameState = "newGame";
@@ -50,16 +50,21 @@ public class BombermanGame {
     public static List<Entity> stillObjects = new ArrayList<>();
     public static List<activeEntity> activeObjects = new ArrayList<>();
     public static char[][] map;
+    public static char[][] bombMap = new char[HEIGHT][WIDTH];
     public static Bomber bomber1, bomber2;
 
-    /*
-    -------SOUND--------
-     */
+
+    //-------SOUND--------
     public static Sound bombSound = new Sound("bombSound");
     public static Sound deadSound = new Sound("deadSound");
     public static Sound powerUpSound = new Sound("powerup");
+    public static Sound victorySound = new Sound("victorySound");
+    public static Sound defeatSound = new Sound("defeatSound");
+    public static Sound bacgroundSound = new Sound("start");
+    //-----------------------------------------------
 
     public static Text time, Level;
+    public static ImageView resumeView, pauseView, muteView, unMuteView;
 
     /**
      * Tạo scene của menu.
@@ -75,19 +80,44 @@ public class BombermanGame {
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
-        Image image = new Image("E:\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\levelUp.png");
+        Image image = new Image(new File("res/textures/levelUp.png").toURI().toString());
         ImageView levelUp = new ImageView(image);
         levelUp.setVisible(false);
 
-        Image pause = new Image("E:\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\pause.png");
-        Image resume = new Image("E:\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\resume.png");
-        ImageView pauseView = new ImageView(pause);
+        Image pause = new Image(new File("res/textures/pause.png").toURI().toString());
+        pauseView = new ImageView(pause);
         pauseView.setX(20);
         pauseView.setY(0);
         pauseView.setFitHeight(32);
         pauseView.setFitWidth(32);
 
-        time = new Text("Times: 120");
+        Image resume = new Image(new File("res/textures/resume.png").toURI().toString());
+        resumeView = new ImageView(resume);
+        resumeView.setX(20);
+        resumeView.setY(0);
+        resumeView.setFitHeight(32);
+        resumeView.setFitWidth(32);
+        resumeView.setVisible(false);
+
+        Image mute = new Image(new File("res/textures/mute.png").toURI().toString());
+        muteView = new ImageView(mute);
+        muteView.setX(700);
+        muteView.setY(0);
+        muteView.setFitHeight(32);
+        muteView.setFitWidth(32);
+
+        Image unMute = new Image(new File("res/textures/unMute.png").toURI().toString());
+        unMuteView = new ImageView(unMute);
+        unMuteView.setX(700);
+        unMuteView.setY(0);
+        unMuteView.setFitHeight(32);
+        unMuteView.setFitWidth(32);
+
+        if (bacgroundSound.isPlaying()) {
+            unMuteView.setVisible(false);
+        } else muteView.setVisible(false);
+
+        time = new Text("Times: " + gameTime);
         time.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         time.setFill(Color.WHITE);
         time.setX(200);
@@ -100,7 +130,7 @@ public class BombermanGame {
         Level.setY(22);
 
         Pane gameControl = new Pane();
-        gameControl.getChildren().addAll(pauseView, Level, time);
+        gameControl.getChildren().addAll(pauseView, resumeView, Level, time, muteView, unMuteView);
         gameControl.setMinSize(800, 640);
         gameControl.setStyle("-fx-background-color: #427235");
 
@@ -118,7 +148,9 @@ public class BombermanGame {
             @Override
             public void handle(long l) {
                 if (gameState.equals("newGame")) {
-                    if (playerCount > 0) {
+                    resetGame();
+                    if (level == 0) level = 1;
+                    if (playerCount > 0 && level > 0) {
                         try {
                             map = Map.readMap("res/levels/Level" + level + ".txt");
                         } catch (IOException e) {
@@ -144,38 +176,39 @@ public class BombermanGame {
                 }
 
                 if (gameState.equals("gameOver")) {
+                    bombSound.play(false, 0);
+                    powerUpSound.play(false, 0);
                     render();
                     try {
                         update();
                     } catch (FileNotFoundException e) {
                         throw new RuntimeException(e);
                     }
-                    if (delayTime-- == 0 )stage.setScene(scene3); // Chuyển sang scene gameOver
+                    if (delayTime-- == 0) {
+                        level = 0;
+                        defeatSound.play(true, 0);
+                        stage.setScene(scene3); // Chuyển sang scene gameOver
+                    }
                     return;
                 }
 
                 if (gameState.equals("levelUp")) {
+                    powerUpSound.play(true, 0);
+                    if (level > 3) return;
                     if (level == 3) { // Đã chơi qua hết tất cả level
+                        gameState = "winning";
+                        victorySound.play(true, 0);
                         stage.setScene(scene4); // Chuyển qua scene victory
                         return;
                     }
                     levelUp.setVisible(true);
-                    level++;
-                    resetGame();
-                    try {
-                        map = Map.readMap("res/levels/Level" + level + ".txt");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    if (delayTime-- == 0) {
+                        powerUpSound.play(false, 0);
+                        gameState = "newGame";
+                        portalCheck = false;
+                        level++;
+                        levelUp.setVisible(false);
                     }
-                    Map.loadMap();
-                    if (playerCount == 1) {
-                        addOnePlayer();
-                    }
-                    if (playerCount == 2) {
-                        addTwoPlayer();
-                    }
-                    levelUp.setVisible(false);
-                    gameState = "running";
                 }
             }
         };
@@ -195,8 +228,41 @@ public class BombermanGame {
      * Update 60s 1 lần
      */
     public static void update() throws FileNotFoundException {
-        Level.setText("Level: " + BombermanGame.level);
-        time.setText("Time: " + BombermanGame.gameTime-- / 60);
+        Level.setText("Level: " + level);
+        time.setText("Time: " + gameTime-- / 60);
+
+        pauseView.setOnMouseClicked(mouseEvent -> {
+            bacgroundSound.play(false, 0);
+            bombSound.play(false, 0);
+            deadSound.play(false, 0);
+            powerUpSound.play(false, 0);
+            pauseView.setVisible(false);
+            resumeView.setVisible(true);
+            gameState = "Pause";
+        });
+
+        resumeView.setOnMouseClicked(mouseEvent -> {
+            bacgroundSound.play(true, 0);
+            resumeView.setVisible(false);
+            pauseView.setVisible(true);
+            gameState = "Running";
+        });
+
+        muteView.setOnMouseClicked(mouseEvent -> {
+            bacgroundSound.play(true, 0);
+            muteView.setVisible(false);
+            unMuteView.setVisible(true);
+        });
+
+        unMuteView.setOnMouseClicked(mouseEvent -> {
+            bacgroundSound.play(false, 0);
+          /*  bombSound.play(false, 0);
+            deadSound.play(false, 0);
+            powerUpSound.play(false, 0);*/
+            unMuteView.setVisible(false);
+            muteView.setVisible(true);
+
+        });
 
         for (Entity entity : stillObjects) {
             entity.update();
@@ -220,11 +286,11 @@ public class BombermanGame {
         }
 
         if (gameTime < 0) {
-            gameState = "gameover";
+            gameState = "gameOver";
             return;
         }
 
-        if (levelUp) {
+        if (portalCheck) {
             gameState = "levelUp";
             return;
         }
@@ -254,8 +320,13 @@ public class BombermanGame {
         activeObjects.clear();
         stillObjects.clear();
         map = new char[WIDTH][HEIGHT];
-        gameTime = 7000;
-        level = 1;
+        gameTime = 12000;
+        delayTime = 100;
+        victorySound.play(false, 0);
+        defeatSound.play(false, 0);
+        bombSound.play(false, 0);
+        deadSound.play(false, 0);
+        powerUpSound.play(false, 0);
     }
 
     private static void addOnePlayer() {
@@ -272,6 +343,6 @@ public class BombermanGame {
         activeObjects.add(bomber2);
         gameState = "Running";
         scene2.setOnKeyPressed(keyEvent -> bomber1.handleKeyEvent1(keyEvent));
-        scene2.setOnKeyPressed(keyEvent -> bomber2.handleKeyEvent2(keyEvent));
+        scene2.setOnKeyReleased(keyEvent -> bomber2.handleKeyEvent2(keyEvent));
     }
 }

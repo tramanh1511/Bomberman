@@ -1,27 +1,27 @@
 package uet.oop.bomberman.entities.activeObject.Character;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.easyMove;
 import uet.oop.bomberman.graphics.Sprite;
 
 import static uet.oop.bomberman.BombermanGame.deadSound;
 
+
 /**
- * Enemy balloon di chuyển ngẫu nhiên với speed = 1, ko biết tránh bom :v.
+ * Enemy minvo.
  */
-public class Balloon extends Character {
-    // Biến random hướng đi của Balloon
+public class Minvo extends Character {
+    // Biến random hướng đi của minvo
     private int randomDirection = 2;
 
     // Thời gian giữa 2 lần chuyển hướng
     private int randomTimeInterval = 0;
-    private int animationTime = 30;
+    private int animationTime = 90;
 
-    public Balloon(int x, int y, Image img) {
+    public Minvo(int x, int y, Image img) {
         super(x, y, img);
-
-        // Tốc độ default
-        speed = 1;
+        speed = 2;
     }
 
     /**
@@ -29,26 +29,41 @@ public class Balloon extends Character {
      */
     @Override
     public void moveUp() {
-        setY(this.getY() - speed);
-        setImg(Sprite.movingSprite(Sprite.balloon_right1, Sprite.balloon_right2, Sprite.balloon_right3, animation, 20).getFxImage());
+        if (canMove(getX(), getY() - speed)) {
+            setY(getY() - speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveDown() {
-        setY(getY() + speed);
-        setImg(Sprite.movingSprite(Sprite.balloon_left1, Sprite.balloon_left2, Sprite.balloon_left3, animation, 20).getFxImage());
+        if (canMove(getX(), getY() + speed)) {
+            setY(getY() + speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveLeft() {
-        setX(getX() - speed);
-        setImg(Sprite.movingSprite(Sprite.balloon_left1, Sprite.balloon_left2, Sprite.balloon_left3, animation, 20).getFxImage());
+        if (canMove(getX() - speed, getY())) {
+            setX(getX() - speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3, animation, 20).getFxImage());
     }
 
     @Override
     public void moveRight() {
-        setX(getX() + speed);
-        setImg(Sprite.movingSprite(Sprite.balloon_right1, Sprite.balloon_right2, Sprite.balloon_right3, animation, 20).getFxImage());
+        if (canMove(getX() + speed, getY())) {
+            setX(getX() + speed);
+        }
+        setImg(Sprite.movingSprite(Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3, animation, 20).getFxImage());
+    }
+
+    public boolean canMove(int x, int y) {
+        int xUnit = y / Sprite.SCALED_SIZE;
+        int yUnit = x / Sprite.SCALED_SIZE;
+        return (BombermanGame.map[xUnit][yUnit] != '#' && BombermanGame.map[xUnit][yUnit] != '*'
+                && BombermanGame.bombMap[xUnit][yUnit] == ' ');
     }
 
     /**
@@ -72,7 +87,7 @@ public class Balloon extends Character {
     }
 
     /**
-     * Cập nhật trạng thái của balloon
+     * Cập nhật trạng thái của minvo
      */
     @Override
     public void update() {
@@ -89,13 +104,13 @@ public class Balloon extends Character {
                     deadSound.play(true, 1);
                 }
                 if (animationTime > 60) {
-                    setImg(Sprite.balloon_dead.getFxImage());
+                    setImg(Sprite.minvo_dead.getFxImage());
                 } else {
                     setImg(Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, animationTime, 20).getFxImage());
                 }
             }
         } else {
-            if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0 && randomTimeInterval <= 0) {
+            if (getY() % Sprite.SCALED_SIZE == 0 && getX() % Sprite.SCALED_SIZE == 0) {
                 int xMap = getYMap();
                 int yMap = getXMap();
                 randomDirection = easyMove.getDirection(xMap, yMap);
@@ -106,5 +121,4 @@ public class Balloon extends Character {
             Move();
         }
     }
-
 }

@@ -7,5 +7,4 @@ public class wallItem extends Item{
         super(x, y, img);
     }
 
-
 }

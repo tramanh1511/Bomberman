@@ -4,11 +4,13 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Bomb.Bomb;
+import uet.oop.bomberman.entities.activeObject.Bomb.Flame;
 import uet.oop.bomberman.entities.activeObject.Item.*;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 
 import static uet.oop.bomberman.BombermanGame.*;
+import static uet.oop.bomberman.entities.activeObject.Bomb.Flame.powerFlames;
 
 
 /**
@@ -17,7 +19,6 @@ import static uet.oop.bomberman.BombermanGame.*;
 public class Bomber extends Character {
 
     public int bombCount; // Số lượng bomb nhả ra mỗi lần
-    public int powerFlames; // Độ dài của flame
     public boolean wallPass;
 
     public int animationTime = 90;
@@ -29,13 +30,8 @@ public class Bomber extends Character {
         super(x, y, image);
         speed = 32; // Tốc độ ban đầu
         bombCount = 1;
-        powerFlames = 1;
         wallPass = false;
         active = true;
-    }
-
-    public void setPowerFlames(int powerFlames) {
-        this.powerFlames = powerFlames;
     }
 
     public void setSpeed(int speed) {
@@ -54,8 +50,7 @@ public class Bomber extends Character {
         if (canMove(getX(), getY() - speed)) {
             setY(getY() - speed);
         }
-        this.setImg(Sprite.movingSprite(Sprite.player_up, Sprite.player_up_1,
-                Sprite.player_up_2, animation, 20).getFxImage());
+        setImg(Sprite.movingSprite(Sprite.player_up, Sprite.player_up_1, Sprite.player_up_2, animation, 20).getFxImage());
     }
 
     @Override
@@ -63,7 +58,7 @@ public class Bomber extends Character {
         if (canMove(getX(), getY() + speed)) {
             setY(getY() + speed);
         }
-        this.setImg(Sprite.movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, animation, 20).getFxImage());
+        setImg(Sprite.movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, animation, 20).getFxImage());
     }
 
     @Override
@@ -71,7 +66,7 @@ public class Bomber extends Character {
         if (canMove(getX() - speed, getY())) {
             setX(getX() - speed);
         }
-        this.setImg(Sprite.movingSprite(Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2, animation, 20).getFxImage());
+        setImg(Sprite.movingSprite(Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2, animation, 20).getFxImage());
     }
 
     @Override
@@ -79,8 +74,7 @@ public class Bomber extends Character {
         if (canMove(getX() + speed, getY())) {
             setX(getX() + speed);
         }
-
-        this.setImg(Sprite.movingSprite(Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2, animation, 20).getFxImage());
+        setImg(Sprite.movingSprite(Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2, animation, 20).getFxImage());
     }
 
     /**
@@ -91,23 +85,29 @@ public class Bomber extends Character {
         if (wallPass) return true;
         int xUnit = x / Sprite.SCALED_SIZE;
         int yUnit = y / Sprite.SCALED_SIZE;
-        System.out.println(map[yUnit][xUnit]);
         return map[yUnit][xUnit] != '*' && map[yUnit][xUnit] != '#';
     }
 
     void putBomb() {
-        BombermanGame.bombSound.play(true, 0);
-        int[] dx = {0, 0, -1, 1};
-        int[] dy = {-1, 1, 0, 0};
-        int count = bombCount - 1;
-        activeObjects.add(new Bomb(getXMap(), getYMap(), Sprite.bomb.getFxImage(), powerFlames));
+        int count = bombCount;
+        if (map[getYMap()][getXMap()] != '*' && map[getYMap()][getXMap()] != '#') {
+            bombMap[getYMap()][getXMap()] = '@'; // vị trí đặt bomb
+            BombermanGame.bombSound.play(true, 0);
+            count--;
+            activeObjects.add(new Bomb(getXMap(), getYMap(), Sprite.bomb.getFxImage(), powerFlames));
+        }
+        else return;
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+        int xUnit, yUnit;
         for (int i = 0; i < 4; i++) {
             if (count == 0) break;
-            int xUnit = getX() + Sprite.SCALED_SIZE * dx[i];
-            int yUnit = getY() + Sprite.SCALED_SIZE * dy[i];
-            if (canMove(xUnit, yUnit)) {
+            xUnit = getXMap() + dx[i];
+            yUnit = getYMap() + dy[i];
+            if (map[yUnit][xUnit] != '*' && map[yUnit][xUnit] != '#') {
+                bombMap[yUnit][xUnit] = '@'; // vị trí đặt bomb
                 count--;
-                activeObjects.add(new Bomb(xUnit / Sprite.SCALED_SIZE, yUnit / Sprite.SCALED_SIZE, Sprite.bomb.getFxImage(), powerFlames));
+                activeObjects.add(new Bomb(xUnit, yUnit, Sprite.bomb.getFxImage(), powerFlames));
             }
         }
     }
@@ -115,7 +115,7 @@ public class Bomber extends Character {
     public void powerUp(Item item) {
         // Tăng độ dài flame
         if (item instanceof flameItem) {
-            setPowerFlames(powerFlames + 1);
+            Flame.setPowerFlames(powerFlames + 1);
         }
 
         // Tăng tốc độ x2
@@ -134,14 +134,12 @@ public class Bomber extends Character {
         }
 
         if (item instanceof Portal) {
-            System.out.println("level");
-            levelUp = true;
+            portalCheck = true;
         }
     }
 
     public void handleKeyEvent1(KeyEvent keyEvent) {
-        if (animation > 200) animation = 0;
-        else animation++;
+        animation++;
         switch (keyEvent.getCode()) {
             case UP:
                 moveUp();
@@ -206,7 +204,7 @@ public class Bomber extends Character {
     @Override
     public void collide(activeEntity entity) {
         // Nếu bomber hoặc entity chết thì ko làm gì
-        if (!entity.active || !active || entity instanceof Bomber) {
+        if (entity.delete || delete || entity instanceof Bomber) {
             return;
         }
         int xBomber = getYMap();
@@ -215,9 +213,16 @@ public class Bomber extends Character {
         int yEntity = entity.getXMap();
 
         if (xBomber == xEntity && yBomber == yEntity) {
-            if (entity instanceof Character) {
+            if (entity instanceof Character || (entity instanceof Bomb && Bomb.timeExplode <= 0)) {
                 active = false;
                 return;
+            }
+            if (entity instanceof Bomb) {
+                Bomb bomb = (Bomb) entity;
+                if (bomb.timeExplode <= 0) {
+                    active = false;
+                    return;
+                }
             }
             if (entity instanceof Item) {
                 powerUpSound.play(true, 0);

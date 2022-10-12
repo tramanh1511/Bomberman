@@ -5,10 +5,12 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
 import uet.oop.bomberman.graphics.Sprite;
 
+import static uet.oop.bomberman.BombermanGame.bombMap;
+
 public class Bomb extends activeEntity {
     protected int timeAfter = 30;
     public int powerFlames;
-    public int timeExplode = 90;
+    public static int timeExplode = 90;
     public boolean added = false;
 
     public Bomb(int xUnit, int yUnit, Image img, int powerFlames) {
@@ -16,6 +18,7 @@ public class Bomb extends activeEntity {
         this.powerFlames = powerFlames;
         active = true;
         delete = false;
+        timeExplode = 90;
     }
 
     /**
@@ -37,13 +40,13 @@ public class Bomb extends activeEntity {
             if (timeAfter < 0) { // Nếu đã hết thời gian nổ
                 delete = true;
                 active = false;
+                bombMap[getYMap()][getXMap()] = ' ';
             }
             // Animation bom nổ
             setImg(Sprite.movingSprite(Sprite.bomb_exploded, Sprite.bomb_exploded1, Sprite.bomb_exploded2, timeAfter, 20).getFxImage());
             BombermanGame.bombSound.play(false, 0);
         }
     }
-
 }
 
 

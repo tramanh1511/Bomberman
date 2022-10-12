@@ -21,10 +21,10 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import uet.oop.bomberman.BombermanGame;
-import uet.oop.bomberman.Sound.Sound;
 
 import java.io.File;
 
+import static uet.oop.bomberman.BombermanGame.*;
 import static uet.oop.bomberman.Main.*;
 
 /**
@@ -40,8 +40,7 @@ public class Menu {
 
         Gamemenu gamemenu = new Gamemenu();
 
-        Image image = new Image("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png");
-       // Image image = new Image("res/textures/menu.png");
+        Image image = new Image(new File("res/textures/menu.png").toURI().toString());
         ImageView background = new ImageView(image);
         // Tao root container
         root.getChildren().addAll(background, gamemenu);
@@ -63,7 +62,7 @@ public class Menu {
         gameStatus gameOver = new gameStatus();
         scene3 = new Scene(root);
 
-        Image image = new Image(new File("res/textures/menu.png").toURI().toString());
+        Image image = new Image(new File("res/textures/gameOver.png").toURI().toString());
         ImageView background = new ImageView(image);
 
         root.getChildren().addAll(background, gameOver);
@@ -79,7 +78,7 @@ public class Menu {
         gameStatus gameOver = new gameStatus();
         scene4 = new Scene(root);
 
-        Image image = new Image(new File("res/textures/menu.png").toURI().toString());
+        Image image = new Image(new File("res/textures/winGame.png").toURI().toString());
         ImageView background = new ImageView(image);
 
         root.getChildren().addAll(background, gameOver);
@@ -113,7 +112,7 @@ public class Menu {
             menuButton onePlayerButton = new menuButton("ONE PLAYER");
             onePlayerButton.setOnMouseClicked(event -> {
                 BombermanGame.playerCount = 1;
-               // BombermanGame.gameState = "newGame";
+                BombermanGame.gameState = "newGame";
                 stage.setScene(scene2);
             });
 
@@ -146,7 +145,6 @@ public class Menu {
             textMenu tutorial = new textMenu(tutorialName, 300, 250);
 
             // Sound Button
-            Sound bacgroundSound = new Sound("start");
             bacgroundSound.play(true, 0);
 
             menuButton soundButton = new menuButton("SOUND");
@@ -300,6 +298,8 @@ public class Menu {
             menuButton replayButton = new menuButton("REPLAY");
             replayButton.setOnMouseClicked(event -> {
                 BombermanGame.gameState = "newGame";
+                defeatSound.play(false, 0);
+                victorySound.play(false, 0);
                 stage.setScene(scene2);
             });
 
@@ -309,7 +309,12 @@ public class Menu {
 
             // Main menu button
             menuButton mainMenuButton = new menuButton("MAIN MENU");
-            mainMenuButton.setOnMouseClicked(event -> stage.setScene(scene1));
+            mainMenuButton.setOnMouseClicked(event -> {
+
+                defeatSound.play(false, 0);
+                victorySound.play(false, 0);
+                stage.setScene(scene1);
+            });
 
             menu0.getChildren().addAll(replayButton, mainMenuButton, exitButton);
             getChildren().add(menu0);

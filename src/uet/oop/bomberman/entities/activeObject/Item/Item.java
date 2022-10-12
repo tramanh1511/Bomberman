@@ -3,9 +3,6 @@ package uet.oop.bomberman.entities.activeObject.Item;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.activeEntity;
-import uet.oop.bomberman.graphics.Sprite;
-
-import static uet.oop.bomberman.BombermanGame.powerUpSound;
 
 /**
  * PowerUp Items.

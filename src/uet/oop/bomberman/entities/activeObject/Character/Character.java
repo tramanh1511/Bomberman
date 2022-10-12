@@ -21,8 +21,11 @@ public abstract class Character extends activeEntity {
      * Hàm di chuyển lên xuống trái phải.
      */
     public abstract void moveUp();
+
     public abstract void moveDown();
+
     public abstract void moveLeft();
+
     public abstract void moveRight();
 
     /**

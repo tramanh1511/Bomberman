@@ -12,10 +12,9 @@ import java.util.List;
 public class Flame extends activeEntity {
     public int direction;
     public boolean last; // xem có là flame cuối hay ko (last = true)
-    public int powerFlames = 1;
+    public static int powerFlames = 1;
     public List<Flame> flameList = new ArrayList<>();
 
-    public int timeExplode = 0;    // Thời gian đếm ngược trc khi xuất hiên flame
     public int timeAfter = 30; // Thời gian xuất hiện flame
 
     /**
@@ -35,14 +34,18 @@ public class Flame extends activeEntity {
         active = false;
     }
 
+    public static void setPowerFlames(int x) {
+        powerFlames = x;
+    }
+
     public void createFlame() {
         int[] direction = {0, 1, 2, 3};
 
         // Duyệt theo 4 hướng
         for (int k = 0; k < 4; k++) {
+            int xBomb = getXMap();
+            int yBomb = getYMap();
             for (int i = 1; i <= powerFlames; i++) {
-                int xBomb = getXMap();
-                int yBomb = getYMap();
                 // Mảng dx, dy dùng để tạo flame theo 4 hướng up, down, left, right.
                 int[] dy = {-i, i, 0, 0};
                 int[] dx = {0, 0, -i, i};
@@ -68,9 +71,7 @@ public class Flame extends activeEntity {
     public void update() {
         animation = 20;
 
-        if (timeExplode > 0) { // chưa nổ
-            timeExplode--;  // Đếm ngược thời gian xuất hiện flame
-        } else {
+       if (Bomb.timeExplode <= 0) {
             active = true; // Flame hoạt động
             timeAfter--; // Đếm ngược thời gian flame hiện thị
 

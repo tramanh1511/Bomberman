@@ -4,6 +4,7 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Brick;
 import uet.oop.bomberman.entities.activeObject.Character.Balloon;
 import uet.oop.bomberman.entities.activeObject.Character.Doll;
+import uet.oop.bomberman.entities.activeObject.Character.Minvo;
 import uet.oop.bomberman.entities.activeObject.Character.Oneal;
 import uet.oop.bomberman.entities.activeObject.Item.bombItem;
 import uet.oop.bomberman.entities.activeObject.Item.flameItem;
@@ -37,6 +38,7 @@ public final class Map {
                 String line = in.nextLine();
                 for (int j = 0; j < width; j++) {
                     map[i][j] = line.charAt(j);
+                    bombMap[i][j] = ' ';
                 }
             }
             in.close();
@@ -93,6 +95,13 @@ public final class Map {
                         // Layer 2: Add doll
                         activeObjects.add(new Doll(j, i, Sprite.doll_right1.getFxImage()));
                         break;
+                    // Minvo
+                    case '4':
+                        // Layer 1: Add grass
+                        stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                        // Layer 2: Add minvo
+                        activeObjects.add(new Minvo(j, i, Sprite.minvo_right1.getFxImage()));
+                        break;
                     // Bomb Item
                     case 'b':
                         BombermanGame.map[i][j] = '*';
@@ -108,7 +117,7 @@ public final class Map {
                         BombermanGame.map[i][j] = '*';
                         // Layer 1: Add grass
                         stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
-                        // Layer 2: Add powerup_bomb
+                        // Layer 2: Add powerup_flame
                         activeObjects.add(new flameItem(j, i, Sprite.powerup_flamepass.getFxImage()));
                         // Layer 3: Add brick
                         activeObjects.add(new Brick(j, i, Sprite.brick.getFxImage()));

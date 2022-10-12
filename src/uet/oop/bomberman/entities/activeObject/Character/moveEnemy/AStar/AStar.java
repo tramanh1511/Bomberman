@@ -1,5 +1,7 @@
 package uet.oop.bomberman.entities.activeObject.Character.moveEnemy.AStar;
 
+import uet.oop.bomberman.BombermanGame;
+
 import java.util.*;
 
 public class AStar {
@@ -37,7 +39,7 @@ public class AStar {
             for (int j = 0; j < searchArea[0].length; j++) {
                 searchArea[i][j] = new Node(i, j);
                 searchArea[i][j].calculateH(finalNode);
-                searchArea[i][j].setBlocked(Map[i][j] == '#' || Map[i][j] == '*');
+                searchArea[i][j].setBlocked(Map[i][j] == '#' || Map[i][j] == '*' || BombermanGame.bombMap[i][j] == '@');
             }
         }
     }
@@ -72,10 +74,9 @@ public class AStar {
      * truy vet
      *
      * @param currentNode chinh la finalNode
-     * @return
      */
     public List<Node> getPath(Node currentNode) {
-        List<Node> path = new ArrayList<Node>();
+        List<Node> path = new ArrayList<>();
         while (currentNode != null) {
             path.add(currentNode); // mang luu se theo thu tu nguoc :>
             currentNode = currentNode.getParent();

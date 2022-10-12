@@ -2,11 +2,10 @@ package uet.oop.bomberman;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import uet.oop.bomberman.entities.activeObject.Character.Bomber;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.File;
 
 /**
  * Hàm main chính của Game, chứa các scene con
@@ -19,9 +18,9 @@ public class Main extends Application {
     public static Scene scene4; // Scene victory
 
     @Override
-    public void start(Stage primaryStage) throws IOException, URISyntaxException {
+    public void start(Stage primaryStage) {
         stage = primaryStage;
-        stage.setTitle("BOMBERMAN VER 2.0");
+        stage.setTitle("BOMBERMAN VER 3.0");
 
         scene1 = BombermanGame.createScene1();
         scene2 = BombermanGame.createScene2();
@@ -29,6 +28,8 @@ public class Main extends Application {
         scene4 = BombermanGame.createScene4();
 
         stage.setScene(scene1);
+        Image icon = new Image(new File("res/textures/Bomberman-icon.png").toURI().toString());
+        stage.getIcons().add(icon);
         stage.setResizable(false);
         stage.show();
     }

@@ -4,7 +4,6 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.activeObject.Character.Bomber;
 import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.AStar.AStar;
 import uet.oop.bomberman.entities.activeObject.Character.moveEnemy.AStar.Node;
-import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.List;
 
@@ -19,17 +18,18 @@ public class hardMove {
      * @param y   tọa độ cột trên map
      * @param map lưu map từ file level
      */
-    public static int getDirection(int x, int y, int speed, char[][] map) {
+    public static int getDirection(int x, int y, char[][] map) {
         for (int i = 0; i < BombermanGame.activeObjects.size(); i++) {
             if (BombermanGame.activeObjects.get(i) instanceof Bomber) {
                 Bomber bomber = (Bomber) BombermanGame.activeObjects.get(i);
 
-                int xBomber = bomber.getY() / Sprite.SCALED_SIZE;
-                int yBomber = bomber.getX() / Sprite.SCALED_SIZE;
+                int xBomber = bomber.getYMap();
+                int yBomber = bomber.getXMap();
 
                 AStar aStar = new AStar(map, x, y, xBomber, yBomber);
                 List<Node> resultPath = aStar.aStarSearch(); // duong di luu cac node tu vi tri Bomber den Enemy
                 if (resultPath != null) {
+                    if (resultPath.size() < 2) return easyMove.getDirection(x, y);
                     Node nextNode = resultPath.get(resultPath.size() - 2); //  Node tai vi tri truoc enemy trong duong di
                     // chinh la buoc tiep Enemy chon di
                     if (x - 1 == nextNode.getRow()) {
@@ -44,6 +44,6 @@ public class hardMove {
                 }
             }
         }
-        return mediumMove.getDirection(x, y, speed, map);
+        return easyMove.getDirection(x, y);
     }
 }
