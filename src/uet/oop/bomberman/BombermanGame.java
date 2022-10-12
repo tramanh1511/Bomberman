@@ -35,7 +35,7 @@ public class BombermanGame {
 
     public static int width = 0;
     public static int height = 0;
-    public static int level = 2;
+    public static int level = 1;
 
     public static boolean portalCheck = false; // Kiểm tra xem đã qua màn chưa
     public static int gameTime = 12000; // Mỗi màn chơi 200s

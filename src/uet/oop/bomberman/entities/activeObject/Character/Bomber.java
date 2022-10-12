@@ -20,8 +20,11 @@ public class Bomber extends Character {
 
     public int bombCount; // Số lượng bomb nhả ra mỗi lần
     public boolean wallPass;
+    public boolean bombPass;
+    public boolean flamePass;
 
     public int animationTime = 90;
+    public int bombTime = 150;
 
     /**
      * Tạo 1 bomber với các thuộc tính cùng với các nút di chuyển.
@@ -31,11 +34,9 @@ public class Bomber extends Character {
         speed = 32; // Tốc độ ban đầu
         bombCount = 1;
         wallPass = false;
+        bombPass = false;
+        flamePass = false;
         active = true;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
     }
 
     public void setbombCount(int bombCount) {
@@ -90,6 +91,7 @@ public class Bomber extends Character {
 
     void putBomb() {
         int count = bombCount;
+        if (count > 1 && bombTime <=0) count = 1;
         if (map[getYMap()][getXMap()] != '*' && map[getYMap()][getXMap()] != '#') {
             bombMap[getYMap()][getXMap()] = '@'; // vị trí đặt bomb
             BombermanGame.bombSound.play(true, 0);
@@ -110,6 +112,7 @@ public class Bomber extends Character {
                 activeObjects.add(new Bomb(xUnit, yUnit, Sprite.bomb.getFxImage(), powerFlames));
             }
         }
+        bombTime--;
     }
 
     public void powerUp(Item item) {
@@ -119,12 +122,13 @@ public class Bomber extends Character {
         }
 
         // Tăng tốc độ x2
-        if (item instanceof speedItem) {
-            setSpeed(speed * 2);
+        if (item instanceof bombPass) {
+            bombPass = true;
         }
 
         // Tăng số bom 1 lần thả
         if (item instanceof bombItem) {
+            bombTime = 500;
             setbombCount(bombCount + 1);
         }
 
@@ -182,6 +186,7 @@ public class Bomber extends Character {
 
     @Override
     public void update() {
+        bombTime--;
         if (!active) {
             animationTime--;
             if (animationTime < 0) {
@@ -213,13 +218,13 @@ public class Bomber extends Character {
         int yEntity = entity.getXMap();
 
         if (xBomber == xEntity && yBomber == yEntity) {
-            if (entity instanceof Character || (entity instanceof Bomb && Bomb.timeExplode <= 0)) {
+            if (entity instanceof Character) {
                 active = false;
                 return;
             }
             if (entity instanceof Bomb) {
                 Bomb bomb = (Bomb) entity;
-                if (bomb.timeExplode <= 0) {
+                if (bomb.timeExplode <= 0 && !bombPass) {
                     active = false;
                     return;
                 }

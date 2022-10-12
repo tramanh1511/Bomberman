@@ -2,9 +2,9 @@ package uet.oop.bomberman.entities.activeObject.Item;
 
 import javafx.scene.image.Image;
 
-public class speedItem extends Item {
+public class bombPass extends Item {
 
-    public speedItem(int x, int y, Image img) {
+    public bombPass(int x, int y, Image img) {
         super(x, y, img);
     }
 
