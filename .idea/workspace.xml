@@ -41,7 +41,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/TRAM ANH/OneDrive - vnu.edu.vn/Dai hoc/Kì I (2022-2023)/oop/bomberman-starter-starter-2",
+    "last_opened_file_path": "E:/bbm/Bomberman_JavaFx-master",
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -50,9 +50,9 @@
   }
 }]]></component>
   <component name="RunManager">
-    <configuration name="BombermanGame" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="uet.oop.bomberman.BombermanGame" />
-      <module name="bomberman" />
+    <configuration name="Main" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="uet.oop.bomberman.Main" />
+      <module name="bomberman-starter-starter-2" />
       <option name="VM_PARAMETERS" value="--module-path &quot;D:\setup\openjfx-19_windows-x64_bin-sdk\javafx-sdk-19\lib&quot; --add-modules=javafx.controls" />
       <method v="2">
         <option name="Make" enabled="true" />

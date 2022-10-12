@@ -36,6 +36,16 @@ public abstract class Entity {
         this.y = y;
     }
 
+    // Lấy tọa độ x trên map
+    public int getXMap() {
+        return x / Sprite.SCALED_SIZE;
+    }
+
+    // Lấy tọa độ y trên map
+    public int getYMap() {
+        return y / Sprite.SCALED_SIZE;
+    }
+
     public Image getImg() {
         return img;
     }
@@ -50,5 +60,5 @@ public abstract class Entity {
 
     public void update() {
 
-    };
+    }
 }

@@ -1,6 +1,5 @@
 package uet.oop.bomberman.Menu;
 
-import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -21,22 +20,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-import uet.oop.bomberman.Sound.Sound;
+import uet.oop.bomberman.BombermanGame;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
 
-import static uet.oop.bomberman.Main.scene2;
-import static uet.oop.bomberman.Main.scene1;
-import static uet.oop.bomberman.Main.stage;
+import static uet.oop.bomberman.BombermanGame.*;
+import static uet.oop.bomberman.Main.*;
 
 /**
  * menu0 game chính.
  */
 public class Menu {
-    public static Scene menu() throws IOException, URISyntaxException {
+    public static Scene menu() {
         Pane pane = new Pane();
         pane.setPrefSize(800, 640);
 
@@ -45,9 +40,8 @@ public class Menu {
 
         Gamemenu gamemenu = new Gamemenu();
 
-         Image image = new Image("C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\menu.png");
+        Image image = new Image(new File("res/textures/menu.png").toURI().toString());
         ImageView background = new ImageView(image);
-
         // Tao root container
         root.getChildren().addAll(background, gamemenu);
 
@@ -60,52 +54,74 @@ public class Menu {
         return scene1;
     }
 
+    public static Scene GAMEOVER() {
+        Pane pane = new Pane();
+        pane.setPrefSize(800, 608);
+
+        Group root = new Group();
+        gameStatus gameOver = new gameStatus();
+        scene3 = new Scene(root);
+
+        Image image = new Image(new File("res/textures/gameOver.png").toURI().toString());
+        ImageView background = new ImageView(image);
+
+        root.getChildren().addAll(background, gameOver);
+
+        return scene3;
+    }
+
+    public static Scene VICTORY() {
+        Pane pane = new Pane();
+        pane.setPrefSize(800, 608);
+
+        Group root = new Group();
+        gameStatus gameOver = new gameStatus();
+        scene4 = new Scene(root);
+
+        Image image = new Image(new File("res/textures/winGame.png").toURI().toString());
+        ImageView background = new ImageView(image);
+
+        root.getChildren().addAll(background, gameOver);
+
+        return scene4;
+    }
+
     /**
      * Xây dựng các button.
      */
     private static class Gamemenu extends Parent {
-        public Gamemenu() throws IOException {
+        public Gamemenu() {
             // Cửa sổ chính chứa các button
             VBox menu0 = new VBox(10);
             VBox menu1 = new VBox(10);
             VBox menu2 = new VBox(10);
-            VBox menu3 = new VBox(10);
-            VBox menu4 = new VBox(10);
 
             menu0.setTranslateX(300);
             menu0.setTranslateY(350);
-
             menu1.setTranslateX(100);
             menu1.setTranslateY(250);
-
             menu2.setTranslateX(300);
             menu2.setTranslateY(350);
-
-            menu3.setTranslateX(300);
-            menu3.setTranslateY(350);
-
-            menu4.setTranslateX(300);
-            menu4.setTranslateY(350);
 
             final int offset = 400;
 
             menu1.setTranslateX(offset);
             menu2.setTranslateX(offset);
-            menu3.setTranslateX(offset);
-            menu4.setTranslateX(offset);
 
-            // New game button
-            menuButton newGameButton = new menuButton("NEW GAME");
-            newGameButton.setOnMouseClicked(event -> stage.setScene(scene2));
+            // One player button
+            menuButton onePlayerButton = new menuButton("ONE PLAYER");
+            onePlayerButton.setOnMouseClicked(event -> {
+                BombermanGame.playerCount = 1;
+                BombermanGame.gameState = "newGame";
+                stage.setScene(scene2);
+            });
 
-            // Resume button
-            menuButton resumeButton = new menuButton("RESUME");
-            resumeButton.setOnMouseClicked(event -> {
-                FadeTransition ft = new FadeTransition(Duration.seconds(0.5), this);
-                ft.setFromValue(1);
-                ft.setToValue(0);
-                ft.setOnFinished(evt -> setVisible(false));
-                ft.play();
+            // Two player button
+            menuButton twoPlayerButton = new menuButton("TWO PLAYER");
+            twoPlayerButton.setOnMouseClicked(event -> {
+                BombermanGame.playerCount = 2;
+                BombermanGame.gameState = "newGame";
+                stage.setScene(scene2);
             });
 
             // tutorial Button
@@ -125,11 +141,10 @@ public class Menu {
                 tt.setOnFinished(event1 -> getChildren().remove(menu0));
             });
 
-            String tutorialName = "C:\\Users\\TRAM ANH\\OneDrive - vnu.edu.vn\\Dai hoc\\Kì I (2022-2023)\\oop\\bomberman-starter-starter-2\\bomberman-starter-starter-2\\res\\textures\\tutorial.png";
+            String tutorialName = new File("res/textures/tutorial.png").toURI().toString();
             textMenu tutorial = new textMenu(tutorialName, 300, 250);
 
             // Sound Button
-            Sound bacgroundSound = new Sound("start");
             bacgroundSound.play(true, 0);
 
             menuButton soundButton = new menuButton("SOUND");
@@ -174,39 +189,6 @@ public class Menu {
                 tt.setOnFinished(event1 -> getChildren().remove(menu2));
             });
 
-            // About button
-            menuButton aboutButton = new menuButton("ABOUT");
-            aboutButton.setOnMouseClicked(event -> {
-                getChildren().add(menu3);
-
-                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu0);
-                tt.setToX(menu0.getTranslateX() - offset);
-
-                TranslateTransition tt1 = new TranslateTransition(Duration.seconds(0.5), menu3);
-                tt1.setToX(menu0.getTranslateX());
-
-                tt.play();
-                tt1.play();
-
-                tt.setOnFinished(event1 -> getChildren().remove(menu0));
-            });
-
-            menuButton backButton3 = new menuButton("BACK");
-            backButton3.setOnMouseClicked(event -> {
-                getChildren().add(menu0);
-
-                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), menu3);
-                tt.setToX(menu3.getTranslateX() + offset);
-
-                TranslateTransition tt1 = new TranslateTransition(Duration.seconds(0.5), menu0);
-                tt1.setToX(menu3.getTranslateX());
-
-                tt.play();
-                tt1.play();
-
-                tt.setOnFinished(event1 -> getChildren().remove(menu3));
-            });
-
             // Exit button
             menuButton exitButton = new menuButton("EXIT");
             exitButton.setOnMouseClicked(event -> System.exit(0));
@@ -230,11 +212,10 @@ public class Menu {
             });
 
             // Thêm các button vào menu
-            menu0.getChildren().addAll(newGameButton, tutorialButton,
-                    aboutButton, soundButton, exitButton);
+            menu0.getChildren().addAll(onePlayerButton, twoPlayerButton, tutorialButton,
+                    soundButton, exitButton);
             menu1.getChildren().addAll(tutorial, backButton1);
             menu2.getChildren().addAll(mute, unMute, backButton2);
-            menu3.getChildren().add(backButton3);
 
             Rectangle bg = new Rectangle(800, 640);
             bg.setFill(Color.GREY);
@@ -307,4 +288,36 @@ public class Menu {
         }
     }
 
+    private static class gameStatus extends Parent {
+        public gameStatus() {
+            VBox menu0 = new VBox(10);
+            menu0.setTranslateX(300);
+            menu0.setTranslateY(450);
+
+            //Replay button
+            menuButton replayButton = new menuButton("REPLAY");
+            replayButton.setOnMouseClicked(event -> {
+                BombermanGame.gameState = "newGame";
+                defeatSound.play(false, 0);
+                victorySound.play(false, 0);
+                stage.setScene(scene2);
+            });
+
+            // Exit button
+            menuButton exitButton = new menuButton("EXIT");
+            exitButton.setOnMouseClicked(event -> System.exit(0));
+
+            // Main menu button
+            menuButton mainMenuButton = new menuButton("MAIN MENU");
+            mainMenuButton.setOnMouseClicked(event -> {
+
+                defeatSound.play(false, 0);
+                victorySound.play(false, 0);
+                stage.setScene(scene1);
+            });
+
+            menu0.getChildren().addAll(replayButton, mainMenuButton, exitButton);
+            getChildren().add(menu0);
+        }
+    }
 }
