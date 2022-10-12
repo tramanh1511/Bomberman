@@ -8,7 +8,7 @@ import uet.oop.bomberman.entities.activeObject.Character.Minvo;
 import uet.oop.bomberman.entities.activeObject.Character.Oneal;
 import uet.oop.bomberman.entities.activeObject.Item.bombItem;
 import uet.oop.bomberman.entities.activeObject.Item.flameItem;
-import uet.oop.bomberman.entities.activeObject.Item.speedItem;
+import uet.oop.bomberman.entities.activeObject.Item.bombPass;
 import uet.oop.bomberman.entities.activeObject.Item.wallItem;
 import uet.oop.bomberman.entities.activeObject.Item.Portal;
 import uet.oop.bomberman.entities.stillObject.Grass;
@@ -122,13 +122,13 @@ public final class Map {
                         // Layer 3: Add brick
                         activeObjects.add(new Brick(j, i, Sprite.brick.getFxImage()));
                         break;
-                    // Speed Item
-                    case 's':
+                    // BombPass Item
+                    case 'o':
                         BombermanGame.map[i][j] = '*';
                         // Layer 1: Add grass
                         stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                         // Layer 2: Add powerup_speed
-                        activeObjects.add(new speedItem(j, i, Sprite.powerup_speed.getFxImage()));
+                        activeObjects.add(new bombPass(j, i, Sprite.powerup_bombpass.getFxImage()));
                         // Layer 3: Add brick
                         activeObjects.add(new Brick(j, i, Sprite.brick.getFxImage()));
                         break;

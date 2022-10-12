@@ -1,7 +1,7 @@
 3 19 25
 #########################
 #   ** **   ** ** * * **#
-# x*# ##2###### ## *### #
+#  *# ##2###### ## *### #
 #*#  *   * **b ** 4 * # #
 #*1 ##  #  ###* ## *# **#
 # * #s* * *    3  **#   #
@@ -41,7 +41,7 @@ p - Bomber
 Items:
 b - Bomb Item
 f - Flame Item
-s - Speed Item
+o - BombPass Item
 w - Wall Item
 
 Kí tự khác các kí tự trên - Grass

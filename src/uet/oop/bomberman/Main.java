@@ -20,7 +20,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
-        stage.setTitle("BOMBERMAN VER 3.0");
+        stage.setTitle("BOMBERMAN GAME ẢO MA CANADA");
 
         scene1 = BombermanGame.createScene1();
         scene2 = BombermanGame.createScene2();
